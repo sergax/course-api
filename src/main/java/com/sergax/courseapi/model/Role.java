@@ -1,6 +1,7 @@
 package com.sergax.courseapi.model;
 
 import lombok.*;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -11,10 +12,14 @@ import java.util.Set;
 @Table(name = "roles")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Role extends BaseEntity {
+@Accessors(chain = true)
+public class Role {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
     @Column(name = "name")
-    String name;
+    private String name;
 
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
-    Set<User> users;
+    private Set<User> users;
 }
