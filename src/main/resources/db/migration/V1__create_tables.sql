@@ -30,7 +30,7 @@ create table if not exists users_roles
         on delete cascade
 );
 
-# insert into roles (id, name)
-# values (1, 'ADMIN'),
-#        (2, 'USER')
+insert into roles (id, name)
+values (1, 'ROLE_ADMIN'),
+       (2, 'ROLE_USER')
 

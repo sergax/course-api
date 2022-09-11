@@ -1,6 +1,7 @@
 package com.sergax.courseapi.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.sergax.courseapi.model.Role;
 import com.sergax.courseapi.model.User;
 import com.sergax.courseapi.model.UserStatus;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,8 @@ import java.util.stream.Collectors;
 
 @Data
 @Accessors(chain = true)
+@AllArgsConstructor
+@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDto {
     private Long id;
@@ -25,32 +28,23 @@ public class UserDto {
     private LocalDate created;
     private LocalDate updated;
     private UserStatus status;
-    private Set<RoleDto> roleDto;
+    private Set<Long> rolesId = new HashSet<>();
 
     public UserDto(User user) {
         this.id = user.getId();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
+        this.email = user.getEmail();
         this.password = user.getPassword();
         this.created = user.getCreated();
         this.updated = user.getUpdated();
         this.status = user.getStatus();
-        if (this.roleDto == null) {
-            this.roleDto = new HashSet<>();
+        if (this.rolesId == null) {
+            this.rolesId = new HashSet<>();
         } else {
-            this.roleDto = user.getRoles().stream()
-                    .map(RoleDto::new)
+            this.rolesId = user.getRoles().stream()
+                    .map(Role::getId)
                     .collect(Collectors.toSet());
         }
-    }
-
-    public User toUser() {
-        return new User()
-                .setId(this.id)
-                .setFirstName(this.firstName)
-                .setLastName(this.lastName)
-                .setEmail(this.email)
-                .setCreated(this.created)
-                .setUpdated(this.updated);
     }
 }

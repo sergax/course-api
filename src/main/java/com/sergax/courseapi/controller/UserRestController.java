@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -34,6 +35,12 @@ public class UserRestController {
     public ResponseEntity<UserDto> updateUser(@PathVariable Long userId,
                                               @RequestBody UserDto userDto) {
         return ResponseEntity.ok(userService.update(userId, userDto));
+    }
+
+    @PatchMapping("/{userId}/{roleId}")
+    public ResponseEntity<UserDto> addRoleToUser(@PathVariable Long userId,
+                                                 @PathVariable  Long roleId) {
+        return ResponseEntity.ok(userService.addRoleForUserById(userId, roleId));
     }
 
     @DeleteMapping("/{userId}")
