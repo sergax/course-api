@@ -35,7 +35,7 @@ public class User {
     private LocalDate updated;
     @Enumerated(EnumType.STRING)
     @Column(name = "user_status")
-    private UserStatus status;
+    private Status status;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

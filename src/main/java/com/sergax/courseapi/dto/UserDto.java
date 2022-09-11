@@ -3,7 +3,7 @@ package com.sergax.courseapi.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sergax.courseapi.model.Role;
 import com.sergax.courseapi.model.User;
-import com.sergax.courseapi.model.UserStatus;
+import com.sergax.courseapi.model.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,7 +27,7 @@ public class UserDto {
     private String email;
     private LocalDate created;
     private LocalDate updated;
-    private UserStatus status;
+    private Status status;
     private Set<Long> rolesId = new HashSet<>();
 
     public UserDto(User user) {
