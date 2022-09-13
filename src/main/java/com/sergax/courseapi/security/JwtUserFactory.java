@@ -1,7 +1,7 @@
 package com.sergax.courseapi.security;
 
-import com.sergax.courseapi.model.Role;
-import com.sergax.courseapi.model.User;
+import com.sergax.courseapi.dto.RoleDto;
+import com.sergax.courseapi.dto.UserDto;
 import com.sergax.courseapi.model.Status;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JwtUserFactory {
 
-    public static JwtUser createJwtUser(User user) {
+    public static JwtUser createJwtUser(UserDto user) {
         return new JwtUser(
                 user.getId(),
                 user.getEmail(),
@@ -24,9 +24,9 @@ public class JwtUserFactory {
         );
     }
 
-    private static Set<GrantedAuthority> mapToGrantedAuthorities(Set<Role> roles) {
+    private static Set<GrantedAuthority> mapToGrantedAuthorities(Set<RoleDto> roles) {
         return roles.stream()
-                .map(Role::getName)
+                .map(RoleDto::getName)
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toSet());
     }

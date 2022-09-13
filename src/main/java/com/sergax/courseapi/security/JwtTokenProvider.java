@@ -1,5 +1,6 @@
 package com.sergax.courseapi.security;
 
+import com.sergax.courseapi.dto.RoleDto;
 import com.sergax.courseapi.model.Role;
 import com.sergax.courseapi.model.User;
 import com.sergax.courseapi.security.exception.JwtAuthenticationException;
@@ -36,7 +37,7 @@ public class JwtTokenProvider {
 
     public String createToken(User user) {
         Claims claims = Jwts.claims().setSubject(user.getEmail());
-        claims.put("roles", getRoleNames(new ArrayList<Role>(user.getRoles())));
+        claims.put("roles", getRoleNames(user.getRoles().stream().toList()));
 
         Date now = new Date();
         Date expiration = new Date(now.getTime() + validityInMilliseconds);

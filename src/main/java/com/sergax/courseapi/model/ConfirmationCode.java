@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -21,12 +22,12 @@ public class ConfirmationCode {
     @Column(name = "email")
     private String email;
     @Column(name = "expiration_date")
-    private Date expirationDate;
-
+    private LocalDate expirationDate;
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private Status status;
-    public ConfirmationCode(String code, String email, Date expirationDate, Status status) {
+
+    public ConfirmationCode(String code, String email, LocalDate expirationDate, Status status) {
         this.code = code;
         this.email = email;
         this.expirationDate = expirationDate;

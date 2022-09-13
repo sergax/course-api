@@ -1,5 +1,5 @@
 package com.sergax.courseapi.model;
 
 public enum Status {
-    ACTIVE, DELETED
+    ACTIVE, DELETED, NOT_ACTIVE, NOT_CONFIRMED
 }

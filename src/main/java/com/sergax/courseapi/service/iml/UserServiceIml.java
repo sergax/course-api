@@ -1,23 +1,27 @@
 package com.sergax.courseapi.service.iml;
 
+import com.sergax.courseapi.dto.RoleDto;
 import com.sergax.courseapi.dto.UserDto;
 import com.sergax.courseapi.model.ConfirmationCode;
 import com.sergax.courseapi.model.User;
 import com.sergax.courseapi.model.Status;
+import com.sergax.courseapi.repository.ConfirmationCodeRepository;
 import com.sergax.courseapi.repository.RoleRepository;
 import com.sergax.courseapi.repository.UserRepository;
-import com.sergax.courseapi.security.JwtTokenProvider;
+import com.sergax.courseapi.service.exception.AlreadyConfirmedException;
+import com.sergax.courseapi.service.exception.CodeNotFoundException;
+import com.sergax.courseapi.service.exception.InvalidConfirmationCodeException;
 import com.sergax.courseapi.service.exception.NotUniqueDataException;
 import com.sergax.courseapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,17 +33,17 @@ import static java.lang.String.format;
 public class UserServiceIml implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final ConfirmationCodeRepository confirmationCodeRepository;
     private final PasswordEncoder passwordEncoder;
-    private final Random random;
-    private final JwtTokenProvider jwtTokenProvider;
+//    private final JwtTokenProvider jwtTokenProvider;
 
-    private static final long MILLISECONDS_IN_HOUR = 3_600_000;
     private static final Integer PASSWORD_LENGTH = 8;
     private static final Integer NUMBER_SPECIAL_CHARS_IN_PASSWORD = 2;
     private static final String AVAILABLE_CHARS_FOR_PASSWORD = "abcdefghijklmnopqrstuvwxyzABCDEFGJKLMNPRSTUVWXYZ0123456789";
     private static final String REQUIRED_SYMBOLS_FOR_PASSWORD = "^$?!@#%&";
-    @Value("${cors.allowed.origins}")
-    private String baseUrl;
+//    @Value("${cors.allowed.origins}")
+//    private String baseUrl;
+
     @Override
     public List<UserDto> findAll() {
         return userRepository.findAll().stream()
@@ -55,7 +59,6 @@ public class UserServiceIml implements UserService {
                         format("User by ID: %d not found", id)));
     }
 
-
     @Override
     @Transactional
     public UserDto create(UserDto userDto) {
@@ -69,8 +72,8 @@ public class UserServiceIml implements UserService {
         var user = toUser(userDto);
         userRepository.save(user);
 
-        log.info("IN create user: {}", new UserDto(user));
-        return new UserDto(user);
+        log.info("IN create user: {}", userDto);
+        return userDto;
     }
 
     @Override
@@ -87,7 +90,7 @@ public class UserServiceIml implements UserService {
                 .setPassword(userDto.getPassword())
                 .setFirstName(userDto.getFirstName())
                 .setLastName(userDto.getLastName())
-                .setRolesId(userDto.getRolesId());
+                .setRoles(userDto.getRoles());
 
         userRepository.save(toUser(userById));
         log.info("In update user: {}", userById);
@@ -115,38 +118,98 @@ public class UserServiceIml implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto addRoleForUserById(Long userId, Long roleId) {
-        var userByEmail = findById(userId);
+        var userDto = findById(userId);
         var roleById = roleRepository.findById(roleId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         format("Role by ID: %d, not found", roleId)));
-        userByEmail.getRolesId().add(roleById.getId());
-        roleById.getUsers().add(toUser(userByEmail));
-        userRepository.save(toUser(userByEmail));
+        userDto.getRoles().add(new RoleDto(roleById));
+        var user = toUser(userDto);
+        roleById.getUsers().add(user);
+        userRepository.save(user);
         roleRepository.save(roleById);
 
-        log.info("IN addRoleForUserByEmail: {}", userId);
-        return userByEmail;
+        log.info("IN addRoleForUserByEmail: {}", new UserDto(user));
+        return new UserDto(user);
     }
 
     @Override
     @Transactional
     public UserDto register(UserDto userDto) {
-        existsUserByEmail(userDto.getEmail());
+        if (existsUserByEmail(userDto.getEmail())) {
+            throw new NotUniqueDataException(
+                    format("User by email: %s, already exists", userDto.getEmail()));
+        }
+        var role = roleRepository.findByName("ROLE_USER").orElseThrow(EntityNotFoundException::new);
+        userDto.setCreated(LocalDate.now());
+        userDto.setUpdated(userDto.getCreated());
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        userDto.setStatus(Status.NOT_CONFIRMED);
+        userDto.setRoles(Set.of(new RoleDto(role)));
 
-        userDto.setRolesId(new HashSet<>());
-        userDto.getRolesId().add(roleRepository.findById(2L);
-
-        User registeredUser = userRepository.save(toUser(userDto));
-
-        int code = random.nextInt(900_000) + 100_000;
-        Date expirationDate = new Date(new Date().getTime() + MILLISECONDS_IN_HOUR);
-        ConfirmationCode confirmationCode = new ConfirmationCode(String.valueOf(code), userDto.getEmail(), expirationDate, Status.ACTIVE);
+        var registeredUser = userRepository.save(toUser(userDto));
+        var random = new Random();
+        var code = random.nextInt(900_000) + 100_000;
+        var expirationDate = LocalDate.now().plus(1L, ChronoUnit.DAYS);
+        var confirmationCode = new ConfirmationCode(
+                String.valueOf(code),
+                userDto.getEmail(),
+                expirationDate,
+                Status.ACTIVE);
         confirmationCodeRepository.save(confirmationCode);
 
-        log.info("IN register user {} registered", registeredUser);
+        log.info("IN register user: {} registered", new UserDto(registeredUser));
         return new UserDto(registeredUser);
+    }
+
+    @Override
+    public UserDto confirmEmail(ConfirmationCode confirmationCode) {
+        if (!confirmationCodeRepository.existsByEmailAndStatus(confirmationCode.getEmail(), Status.ACTIVE)) {
+            throw new CodeNotFoundException(
+                    String.format("Active code for email %s is not found", confirmationCode.getEmail()));
+        }
+
+        var user = userRepository.findByEmail(confirmationCode.getEmail()).orElseThrow(IllegalStateException::new);
+
+        if (user.getStatus() != Status.NOT_CONFIRMED) {
+            throw new AlreadyConfirmedException(
+                    String.format("User with email %s has already confirmed his email", confirmationCode.getEmail()));
+        }
+
+        var correctConfirmationCode =
+                confirmationCodeRepository.getConfirmationCodeByEmailAndStatus(
+                        confirmationCode.getEmail(), Status.ACTIVE);
+
+        if (!correctConfirmationCode.getCode().equals(confirmationCode.getCode())) {
+            throw new InvalidConfirmationCodeException("Invalid code");
+        }
+
+        if (correctConfirmationCode.getExpirationDate().isBefore(LocalDate.now())) {
+            var random = new Random();
+            var code = random.nextInt(900_000) + 100_000;
+            var expirationDate = LocalDate.now().plus(1L, ChronoUnit.DAYS);
+            var newConfirmationCode = new ConfirmationCode(String.valueOf(code), user.getEmail(), expirationDate, Status.ACTIVE);
+            confirmationCodeRepository.saveAndFlush(newConfirmationCode);
+            log.info("IN confirmEmail code {} has been created", newConfirmationCode);
+
+            correctConfirmationCode.setStatus(Status.DELETED);
+            confirmationCodeRepository.saveAndFlush(correctConfirmationCode);
+            log.info("IN confirmEmail code {} has been updated", correctConfirmationCode);
+
+            confirmationCodeRepository.flush();
+
+//            String message = "Hello, your previous confirmation code has been expired. There is your new email confirmation code: " + newConfirmationCode.getCode();
+//            mailService.send(user.getEmail(), "Email confirmation code", message);
+
+        }
+
+        user.setStatus(Status.ACTIVE);
+        var updatesUser = userRepository.save(user);
+        correctConfirmationCode.setStatus(Status.DELETED);
+        confirmationCodeRepository.save(correctConfirmationCode);
+
+        return new UserDto(updatesUser);
     }
 
     public User toUser(UserDto userDto) {
@@ -159,12 +222,12 @@ public class UserServiceIml implements UserService {
                 .setCreated(userDto.getCreated())
                 .setUpdated(userDto.getUpdated())
                 .setStatus(userDto.getStatus());
-        if (userDto.getRolesId() == null) {
+        if (userDto.getRoles() == null) {
             user.setRoles(new HashSet<>());
         } else {
-            user.setRoles(userDto.getRolesId().stream()
-                    .map(roleRepository::findById)
-                    .map(Optional::get)
+            user.setRoles(userDto.getRoles().stream()
+                    .map(roleDto -> roleRepository.findByName(roleDto.getName()))
+                    .map(Optional::orElseThrow)
                     .collect(Collectors.toSet()));
         }
         return user;

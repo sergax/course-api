@@ -7,13 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/users")
 @RequiredArgsConstructor
-public class UserRestController {
+public class UserRestControllerV1 {
     private final UserService userService;
 
     @GetMapping("/all")
@@ -48,4 +47,5 @@ public class UserRestController {
         userService.deleteById(userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }

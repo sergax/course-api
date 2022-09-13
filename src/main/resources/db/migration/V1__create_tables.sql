@@ -18,19 +18,33 @@ create table if not exists roles
 
 create table if not exists users_roles
 (
-    user_id bigint not null unique,
-    role_id bigint not null unique,
+    user_id bigint not null,
+    role_id bigint not null,
 
-    foreign key (user_id)
-        references users (id)
-        on delete cascade,
+    constraint users_roles_user_id__fk
+        foreign key (user_id)
+            references users (id)
+            on delete cascade,
 
-    foreign key (role_id)
-        references roles (id)
-        on delete cascade
+    constraint users_roles_role_id__fk
+        foreign key (role_id)
+            references roles (id)
+            on delete cascade,
+
+    constraint user_role UNIQUE (user_id, role_id)
 );
 
 insert into roles (id, name)
 values (1, 'ROLE_ADMIN'),
-       (2, 'ROLE_USER')
+       (2, 'ROLE_USER');
+
+create table if not exists confirmation_codes
+(
+    id              bigint auto_increment primary key,
+    code            varchar(6),
+    email           varchar(255) not null,
+    status          varchar(25)  not null,
+    expiration_date timestamp    not null
+);
+
 

@@ -1,9 +1,7 @@
 package com.sergax.courseapi.dto;
 
 import com.sergax.courseapi.model.Role;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -23,4 +21,5 @@ public class RoleDto {
                 .map(UserDto::new)
                 .collect(Collectors.toSet());
     }
+
 }

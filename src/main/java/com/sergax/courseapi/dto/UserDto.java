@@ -1,7 +1,5 @@
 package com.sergax.courseapi.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.sergax.courseapi.model.Role;
 import com.sergax.courseapi.model.User;
 import com.sergax.courseapi.model.Status;
 import lombok.AllArgsConstructor;
@@ -18,7 +16,6 @@ import java.util.stream.Collectors;
 @Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDto {
     private Long id;
     private String firstName;
@@ -28,7 +25,7 @@ public class UserDto {
     private LocalDate created;
     private LocalDate updated;
     private Status status;
-    private Set<Long> rolesId = new HashSet<>();
+    private Set<RoleDto> roles;
 
     public UserDto(User user) {
         this.id = user.getId();
@@ -39,12 +36,13 @@ public class UserDto {
         this.created = user.getCreated();
         this.updated = user.getUpdated();
         this.status = user.getStatus();
-        if (this.rolesId == null) {
-            this.rolesId = new HashSet<>();
+        if (this.roles == null) {
+            this.roles = new HashSet<>();
         } else {
-            this.rolesId = user.getRoles().stream()
-                    .map(Role::getId)
+            this.roles = user.getRoles().stream()
+                    .map(RoleDto::new)
                     .collect(Collectors.toSet());
         }
     }
+
 }
