@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "/api/v1/auth")
 @RequiredArgsConstructor
-public class AuthRestController {
+public class AuthRestControllerV1 {
     private final AuthenticationManager authenticationManager;
     private final UserServiceIml userService;
     private final JwtTokenProvider jwtTokenProvider;

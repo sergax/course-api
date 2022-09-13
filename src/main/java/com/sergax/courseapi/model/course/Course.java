@@ -1,11 +1,11 @@
 package com.sergax.courseapi.model.course;
 
-import com.sergax.courseapi.model.BaseEntity;
 import com.sergax.courseapi.model.Status;
 import com.sergax.courseapi.model.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -16,7 +16,11 @@ import java.util.List;
 @Table(name = "courses")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Course extends BaseEntity {
+@Accessors(chain = true)
+public class Course {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @Column(name = "name")
     private String name;
     @Column(name = "description")

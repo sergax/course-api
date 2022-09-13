@@ -1,6 +1,5 @@
 package com.sergax.courseapi.model.course;
 
-import com.sergax.courseapi.model.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +13,10 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Accessors(chain = true)
 @Table(name = "courses_contents")
-public class Content extends BaseEntity {
+public class Content {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @Column(name = "name")
     private String name;
     @Column(name = "text")

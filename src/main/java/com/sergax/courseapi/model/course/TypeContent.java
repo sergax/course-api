@@ -1,5 +1,5 @@
 package com.sergax.courseapi.model.course;
 
 public enum TypeContent {
-    TEXT, VIDEO, NO_CONTENT
+    TEXT, VIDEO, MIXED, NO_CONTENT
 }

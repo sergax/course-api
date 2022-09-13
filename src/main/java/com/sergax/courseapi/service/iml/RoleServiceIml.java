@@ -1,6 +1,6 @@
 package com.sergax.courseapi.service.iml;
 
-import com.sergax.courseapi.model.user.Role;
+import com.sergax.courseapi.dto.RoleDto;
 import com.sergax.courseapi.repository.RoleRepository;
 import com.sergax.courseapi.service.RoleService;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -19,28 +20,31 @@ public class RoleServiceIml implements RoleService {
     private final RoleRepository roleRepository;
 
     @Override
-    public List<Role> findAll() {
-        return roleRepository.findAll();
+    public List<RoleDto> findAll() {
+        return roleRepository.findAll().stream()
+                .map(RoleDto::new)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Role findById(Long id) {
+    public RoleDto findById(Long id) {
         log.info("In findById role ID: {}", id);
         return roleRepository.findById(id)
+                .map(RoleDto::new)
                 .orElseThrow(() -> new EntityNotFoundException(
                         format("Role by ID: %d, not found", id)));
     }
 
     @Override
-    public Role save(Role role) {
-        return roleRepository.save(role);
+    public RoleDto save(RoleDto roleDto) {
+        return new RoleDto(roleRepository.save(roleDto.toRole()));
     }
 
     @Override
-    public Role update(Long id, Role role) {
+    public RoleDto update(Long id, RoleDto roleDto) {
         var existingRole = roleRepository.findById(id).orElseThrow();
-        existingRole.setName(role.getName());
-        return existingRole;
+        existingRole.setName(roleDto.getName());
+        return new RoleDto(existingRole);
     }
 
     @Override

@@ -25,7 +25,7 @@ public class UserRestControllerV1 {
         return ResponseEntity.ok(userService.findById(userId));
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
         return new ResponseEntity<>(userService.save(userDto), HttpStatus.CREATED);
     }

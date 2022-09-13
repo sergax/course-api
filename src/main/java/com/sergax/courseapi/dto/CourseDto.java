@@ -2,6 +2,7 @@ package com.sergax.courseapi.dto;
 
 import com.sergax.courseapi.model.Status;
 import com.sergax.courseapi.model.course.Course;
+import com.sergax.courseapi.model.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -43,4 +44,5 @@ public class CourseDto extends BaseEntityDto {
                 .map(ContentDto::new)
                 .collect(Collectors.toList());
     }
+
 }

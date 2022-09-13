@@ -123,14 +123,14 @@ public class UserServiceIml implements UserService {
         var userDto = findById(userId);
         var roleById = roleService.findById(roleId);
 
-        userDto.getRoles().add(new RoleDto(roleById));
+        userDto.getRoles().add(roleById);
+        roleById.getUsers().add(userDto);
         var user = toUser(userDto);
-        roleById.getUsers().add(user);
         userRepository.save(user);
         roleService.save(roleById);
 
-        log.info("IN addRoleForUserByEmail: {}", new UserDto(user));
-        return new UserDto(user);
+        log.info("IN addRoleForUserByEmail: {}", userDto);
+        return userDto;
     }
 
     @Override
@@ -145,7 +145,7 @@ public class UserServiceIml implements UserService {
         userDto.setUpdated(userDto.getCreated());
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         userDto.setStatus(Status.NOT_CONFIRMED);
-        userDto.setRoles(List.of(new RoleDto(role)));
+        userDto.setRoles(List.of(role));
 
         var registeredUser = userRepository.save(toUser(userDto));
         var random = new Random();
@@ -213,7 +213,7 @@ public class UserServiceIml implements UserService {
 
     public User toUser(UserDto userDto) {
         var user = new User()
-                .set(userDto.getId())
+                .setId(userDto.getId())
                 .setFirstName(userDto.getFirstName())
                 .setLastName(userDto.getLastName())
                 .setPassword(userDto.getPassword())

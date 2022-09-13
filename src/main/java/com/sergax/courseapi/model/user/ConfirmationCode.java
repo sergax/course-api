@@ -1,20 +1,20 @@
 package com.sergax.courseapi.model.user;
 
-import com.sergax.courseapi.model.BaseEntity;
 import com.sergax.courseapi.model.Status;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Data
 @Table(name = "confirmation_codes")
 @NoArgsConstructor
-public class ConfirmationCode extends BaseEntity {
+public class ConfirmationCode {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @Column(name = "code")
     private String code;
     @Column(name = "email")

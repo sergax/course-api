@@ -23,4 +23,9 @@ public class RoleDto extends BaseEntityDto {
                 .collect(Collectors.toList());
     }
 
+    public Role toRole() {
+        return new Role()
+                .setId(this.id)
+                .setName(this.name);
+    }
 }
