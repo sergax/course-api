@@ -1,6 +1,6 @@
 package com.sergax.courseapi.dto;
 
-import com.sergax.courseapi.model.ConfirmationCode;
+import com.sergax.courseapi.model.user.ConfirmationCode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -20,18 +20,8 @@ create table if not exists users_roles
 (
     user_id bigint not null,
     role_id bigint not null,
-
-    constraint users_roles_user_id__fk
-        foreign key (user_id)
-            references users (id)
-            on delete cascade,
-
-    constraint users_roles_role_id__fk
-        foreign key (role_id)
-            references roles (id)
-            on delete cascade,
-
-    constraint user_role UNIQUE (user_id, role_id)
+    foreign key (user_id) references users (id) on delete cascade,
+    foreign key (role_id) references roles (id) on delete cascade
 );
 
 insert into roles (id, name)

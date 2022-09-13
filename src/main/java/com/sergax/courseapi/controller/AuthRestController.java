@@ -1,10 +1,10 @@
 package com.sergax.courseapi.controller;
 
 import com.sergax.courseapi.dto.*;
-import com.sergax.courseapi.model.ConfirmationCode;
-import com.sergax.courseapi.model.Role;
+import com.sergax.courseapi.model.user.ConfirmationCode;
+import com.sergax.courseapi.model.user.Role;
 import com.sergax.courseapi.model.Status;
-import com.sergax.courseapi.model.User;
+import com.sergax.courseapi.model.user.User;
 import com.sergax.courseapi.security.JwtTokenProvider;
 import com.sergax.courseapi.service.iml.UserServiceIml;
 import lombok.RequiredArgsConstructor;

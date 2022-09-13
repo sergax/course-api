@@ -2,12 +2,12 @@ package com.sergax.courseapi.service.iml;
 
 import com.sergax.courseapi.dto.RoleDto;
 import com.sergax.courseapi.dto.UserDto;
-import com.sergax.courseapi.model.ConfirmationCode;
-import com.sergax.courseapi.model.User;
+import com.sergax.courseapi.model.user.ConfirmationCode;
+import com.sergax.courseapi.model.user.User;
 import com.sergax.courseapi.model.Status;
 import com.sergax.courseapi.repository.ConfirmationCodeRepository;
-import com.sergax.courseapi.repository.RoleRepository;
 import com.sergax.courseapi.repository.UserRepository;
+import com.sergax.courseapi.service.RoleService;
 import com.sergax.courseapi.service.exception.AlreadyConfirmedException;
 import com.sergax.courseapi.service.exception.CodeNotFoundException;
 import com.sergax.courseapi.service.exception.InvalidConfirmationCodeException;
@@ -32,7 +32,7 @@ import static java.lang.String.format;
 @RequiredArgsConstructor
 public class UserServiceIml implements UserService {
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
+    private final RoleService roleService;
     private final ConfirmationCodeRepository confirmationCodeRepository;
     private final PasswordEncoder passwordEncoder;
 //    private final JwtTokenProvider jwtTokenProvider;
@@ -61,7 +61,7 @@ public class UserServiceIml implements UserService {
 
     @Override
     @Transactional
-    public UserDto create(UserDto userDto) {
+    public UserDto save(UserDto userDto) {
         if (existsUserByEmail(userDto.getEmail())) {
             throw new NotUniqueDataException(
                     format("User by email: %s , already exists", userDto.getEmail()));
@@ -121,14 +121,13 @@ public class UserServiceIml implements UserService {
     @Transactional
     public UserDto addRoleForUserById(Long userId, Long roleId) {
         var userDto = findById(userId);
-        var roleById = roleRepository.findById(roleId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        format("Role by ID: %d, not found", roleId)));
+        var roleById = roleService.findById(roleId);
+
         userDto.getRoles().add(new RoleDto(roleById));
         var user = toUser(userDto);
         roleById.getUsers().add(user);
         userRepository.save(user);
-        roleRepository.save(roleById);
+        roleService.save(roleById);
 
         log.info("IN addRoleForUserByEmail: {}", new UserDto(user));
         return new UserDto(user);
@@ -141,12 +140,12 @@ public class UserServiceIml implements UserService {
             throw new NotUniqueDataException(
                     format("User by email: %s, already exists", userDto.getEmail()));
         }
-        var role = roleRepository.findByName("ROLE_USER").orElseThrow(EntityNotFoundException::new);
+        var role = roleService.findById(2L);
         userDto.setCreated(LocalDate.now());
         userDto.setUpdated(userDto.getCreated());
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         userDto.setStatus(Status.NOT_CONFIRMED);
-        userDto.setRoles(Set.of(new RoleDto(role)));
+        userDto.setRoles(List.of(new RoleDto(role)));
 
         var registeredUser = userRepository.save(toUser(userDto));
         var random = new Random();
@@ -214,7 +213,7 @@ public class UserServiceIml implements UserService {
 
     public User toUser(UserDto userDto) {
         var user = new User()
-                .setId(userDto.getId())
+                .set(userDto.getId())
                 .setFirstName(userDto.getFirstName())
                 .setLastName(userDto.getLastName())
                 .setPassword(userDto.getPassword())
@@ -223,12 +222,11 @@ public class UserServiceIml implements UserService {
                 .setUpdated(userDto.getUpdated())
                 .setStatus(userDto.getStatus());
         if (userDto.getRoles() == null) {
-            user.setRoles(new HashSet<>());
+            user.setRoles(new ArrayList<>());
         } else {
             user.setRoles(userDto.getRoles().stream()
-                    .map(roleDto -> roleRepository.findByName(roleDto.getName()))
-                    .map(Optional::orElseThrow)
-                    .collect(Collectors.toSet()));
+                    .map(roleDto -> roleService.findById(roleDto.getId()))
+                    .collect(Collectors.toList()));
         }
         return user;
     }

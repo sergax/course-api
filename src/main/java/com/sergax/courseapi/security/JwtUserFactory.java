@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,7 +25,7 @@ public class JwtUserFactory {
         );
     }
 
-    private static Set<GrantedAuthority> mapToGrantedAuthorities(Set<RoleDto> roles) {
+    private static Set<GrantedAuthority> mapToGrantedAuthorities(List<RoleDto> roles) {
         return roles.stream()
                 .map(RoleDto::getName)
                 .map(SimpleGrantedAuthority::new)

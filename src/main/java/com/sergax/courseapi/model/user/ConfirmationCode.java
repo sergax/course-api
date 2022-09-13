@@ -1,5 +1,7 @@
-package com.sergax.courseapi.model;
+package com.sergax.courseapi.model.user;
 
+import com.sergax.courseapi.model.BaseEntity;
+import com.sergax.courseapi.model.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,11 +14,7 @@ import java.util.Date;
 @Data
 @Table(name = "confirmation_codes")
 @NoArgsConstructor
-@AllArgsConstructor
-public class ConfirmationCode {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class ConfirmationCode extends BaseEntity {
     @Column(name = "code")
     private String code;
     @Column(name = "email")

@@ -1,11 +1,14 @@
-package com.sergax.courseapi.model;
+package com.sergax.courseapi.model.user;
 
+import com.sergax.courseapi.model.BaseEntity;
+import com.sergax.courseapi.model.Status;
+import com.sergax.courseapi.model.course.Course;
 import lombok.*;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 @Data
 @Entity
@@ -13,10 +16,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class User extends BaseEntity {
     @Column(name = "first_name")
     private String firstName;
     @Column(name = "last_name")
@@ -40,7 +40,10 @@ public class User {
                     name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(
                     name = "role_id", referencedColumnName = "id"))
-    private Set<Role> roles;
+    private List<Role> roles;
+
+    @ManyToMany(mappedBy = "mentors", fetch = FetchType.LAZY)
+    private List<Course> courses;
 
 }
 

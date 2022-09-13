@@ -1,6 +1,6 @@
 package com.sergax.courseapi.dto;
 
-import com.sergax.courseapi.model.User;
+import com.sergax.courseapi.model.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,8 +1,7 @@
 package com.sergax.courseapi.security;
 
-import com.sergax.courseapi.dto.RoleDto;
-import com.sergax.courseapi.model.Role;
-import com.sergax.courseapi.model.User;
+import com.sergax.courseapi.model.user.Role;
+import com.sergax.courseapi.model.user.User;
 import com.sergax.courseapi.security.exception.JwtAuthenticationException;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;

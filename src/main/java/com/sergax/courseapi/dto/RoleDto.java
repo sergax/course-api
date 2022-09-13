@@ -1,25 +1,26 @@
 package com.sergax.courseapi.dto;
 
-import com.sergax.courseapi.model.Role;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.sergax.courseapi.model.user.Role;
 import lombok.*;
 
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RoleDto {
-    private Long id;
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class RoleDto extends BaseEntityDto {
     private String name;
-    private Set<UserDto> users;
+    private List<UserDto> users;
 
     public RoleDto(Role role) {
         this.id = role.getId();
         this.name = role.getName();
         this.users = role.getUsers().stream()
                 .map(UserDto::new)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
 }

@@ -1,6 +1,6 @@
 package com.sergax.courseapi.dto;
 
-import com.sergax.courseapi.model.User;
+import com.sergax.courseapi.model.user.User;
 import com.sergax.courseapi.model.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,16 +8,15 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
 @Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDto {
-    private Long id;
+public class UserDto extends BaseEntityDto {
     private String firstName;
     private String lastName;
     private String password;
@@ -25,7 +24,7 @@ public class UserDto {
     private LocalDate created;
     private LocalDate updated;
     private Status status;
-    private Set<RoleDto> roles;
+    private List<RoleDto> roles;
 
     public UserDto(User user) {
         this.id = user.getId();
@@ -37,11 +36,11 @@ public class UserDto {
         this.updated = user.getUpdated();
         this.status = user.getStatus();
         if (this.roles == null) {
-            this.roles = new HashSet<>();
+            this.roles = new ArrayList<>();
         } else {
             this.roles = user.getRoles().stream()
                     .map(RoleDto::new)
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toList());
         }
     }
 
