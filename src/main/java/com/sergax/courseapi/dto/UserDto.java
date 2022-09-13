@@ -25,6 +25,7 @@ public class UserDto extends BaseEntityDto {
     private LocalDate updated;
     private Status status;
     private List<RoleDto> roles;
+    private List<CourseDto> courses;
 
     public UserDto(User user) {
         this.id = user.getId();
@@ -42,6 +43,33 @@ public class UserDto extends BaseEntityDto {
                     .map(RoleDto::new)
                     .collect(Collectors.toList());
         }
+        if (this.courses == null) {
+            this.courses = new ArrayList<>();
+        } else {
+            this.courses = user.getCourses().stream()
+                    .map(CourseDto::new)
+                    .collect(Collectors.toList());
+        }
+    }
+
+    public User toUser() {
+        var user = new User()
+                .setId(this.getId())
+                .setFirstName(this.getFirstName())
+                .setLastName(this.getLastName())
+                .setPassword(this.getPassword())
+                .setEmail(this.getEmail())
+                .setCreated(this.getCreated())
+                .setUpdated(this.getUpdated())
+                .setStatus(this.getStatus());
+//        if (this.getRoles() == null) {
+//            user.setRoles(new ArrayList<>());
+//        } else {
+//            user.setRoles(this.getRoles().stream()
+//                    .map(RoleDto::toRole)
+//                    .collect(Collectors.toList()));
+//        }
+        return user;
     }
 
 }

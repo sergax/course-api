@@ -21,8 +21,8 @@ public class Content {
     private String name;
     @Column(name = "text")
     private String text;
-    @Column(name = "movie_url")
-    private String movie_url;
+    @Column(name = "movieUrl")
+    private String movieUrl;
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
     private TypeContent typeContent;

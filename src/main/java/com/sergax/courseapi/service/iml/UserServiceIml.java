@@ -45,61 +45,49 @@ public class UserServiceIml implements UserService {
 //    private String baseUrl;
 
     @Override
-    public List<UserDto> findAll() {
-        return userRepository.findAll().stream()
-                .map(UserDto::new)
-                .collect(Collectors.toList());
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 
     @Override
-    public UserDto findById(Long id) {
+    public User findById(Long id) {
         return userRepository.findById(id)
-                .map(UserDto::new)
                 .orElseThrow(() -> new EntityNotFoundException(
                         format("User by ID: %d not found", id)));
     }
 
     @Override
     @Transactional
-    public UserDto save(UserDto userDto) {
-        if (existsUserByEmail(userDto.getEmail())) {
-            throw new NotUniqueDataException(
-                    format("User by email: %s , already exists", userDto.getEmail()));
-        }
-        userDto.setCreated(LocalDate.now());
-        userDto.setUpdated(LocalDate.now());
-        userDto.setStatus(Status.ACTIVE);
-        var user = toUser(userDto);
+    public User save(User user) {
         userRepository.save(user);
-
-        log.info("IN create user: {}", userDto);
-        return userDto;
+        log.info("IN create user: {}", user);
+        return user;
     }
 
     @Override
     @Transactional
-    public UserDto update(Long userId, UserDto userDto) {
-        UserDto userById = findById(userId);
-        if (existsUserByEmail(userDto.getEmail())) {
+    public User update(Long userId, User user) {
+        User userById = findById(userId);
+        if (existsUserByEmail(user.getEmail())) {
             throw new NotUniqueDataException(
-                    format("User by email: %s , already exists", userDto.getEmail()));
+                    format("User by email: %s , already exists", user.getEmail()));
         }
         userById
-                .setEmail(userDto.getEmail())
+                .setEmail(user.getEmail())
                 .setUpdated(LocalDate.now())
-                .setPassword(userDto.getPassword())
-                .setFirstName(userDto.getFirstName())
-                .setLastName(userDto.getLastName())
-                .setRoles(userDto.getRoles());
+                .setPassword(user.getPassword())
+                .setFirstName(user.getFirstName())
+                .setLastName(user.getLastName())
+                .setRoles(user.getRoles());
 
-        userRepository.save(toUser(userById));
+        userRepository.save(userById);
         log.info("In update user: {}", userById);
         return userById;
     }
 
     @Override
     public void deleteById(Long id) {
-        UserDto userById = findById(id);
+        var userById = findById(id);
         userById.setStatus(Status.DELETED);
         log.info("In deleteById user was deleted: {}", userById);
     }
@@ -120,40 +108,39 @@ public class UserServiceIml implements UserService {
     @Override
     @Transactional
     public UserDto addRoleForUserById(Long userId, Long roleId) {
-        var userDto = findById(userId);
-        var roleById = roleService.findById(roleId);
+        var user = findById(userId);
+        var role = roleService.findById(roleId);
 
-        userDto.getRoles().add(roleById);
-        roleById.getUsers().add(userDto);
-        var user = toUser(userDto);
+        user.getRoles().add(role);
+        role.getUsers().add(user);
         userRepository.save(user);
-        roleService.save(roleById);
+        roleService.save(role);
 
-        log.info("IN addRoleForUserByEmail: {}", userDto);
-        return userDto;
+        log.info("IN addRoleForUserByEmail: {}", new UserDto(user));
+        return new UserDto(user);
     }
 
     @Override
     @Transactional
-    public UserDto register(UserDto userDto) {
-        if (existsUserByEmail(userDto.getEmail())) {
+    public UserDto register(User user) {
+        if (existsUserByEmail(user.getEmail())) {
             throw new NotUniqueDataException(
-                    format("User by email: %s, already exists", userDto.getEmail()));
+                    format("User by email: %s, already exists", user.getEmail()));
         }
         var role = roleService.findById(2L);
-        userDto.setCreated(LocalDate.now());
-        userDto.setUpdated(userDto.getCreated());
-        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        userDto.setStatus(Status.NOT_CONFIRMED);
-        userDto.setRoles(List.of(role));
+        user.setCreated(LocalDate.now());
+        user.setUpdated(user.getCreated());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setStatus(Status.NOT_CONFIRMED);
+        user.setRoles(List.of(role));
 
-        var registeredUser = userRepository.save(toUser(userDto));
+        var registeredUser = userRepository.save(user);
         var random = new Random();
         var code = random.nextInt(900_000) + 100_000;
         var expirationDate = LocalDate.now().plus(1L, ChronoUnit.DAYS);
         var confirmationCode = new ConfirmationCode(
                 String.valueOf(code),
-                userDto.getEmail(),
+                user.getEmail(),
                 expirationDate,
                 Status.ACTIVE);
         confirmationCodeRepository.save(confirmationCode);
@@ -211,23 +198,4 @@ public class UserServiceIml implements UserService {
         return new UserDto(updatesUser);
     }
 
-    public User toUser(UserDto userDto) {
-        var user = new User()
-                .setId(userDto.getId())
-                .setFirstName(userDto.getFirstName())
-                .setLastName(userDto.getLastName())
-                .setPassword(userDto.getPassword())
-                .setEmail(userDto.getEmail())
-                .setCreated(userDto.getCreated())
-                .setUpdated(userDto.getUpdated())
-                .setStatus(userDto.getStatus());
-        if (userDto.getRoles() == null) {
-            user.setRoles(new ArrayList<>());
-        } else {
-            user.setRoles(userDto.getRoles().stream()
-                    .map(roleDto -> roleService.findById(roleDto.getId()))
-                    .collect(Collectors.toList()));
-        }
-        return user;
-    }
 }

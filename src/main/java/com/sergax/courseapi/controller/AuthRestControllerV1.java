@@ -34,7 +34,7 @@ public class AuthRestControllerV1 {
         String email = requestDto.getEmail();
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, requestDto.getPassword()));
 
-        User user = userService.toUser(userService.findUserByEmail(email));
+        User user = userService.findUserByEmail(email).toUser();
 
         if (user.getStatus().equals(Status.NOT_ACTIVE)) {
             throw new EntityNotFoundException
@@ -54,14 +54,14 @@ public class AuthRestControllerV1 {
 
     @PostMapping("/registration")
     public ResponseEntity<UserDto> registration(@RequestBody UserDto userDto) {
-        return new  ResponseEntity<>(userService.register(userDto), HttpStatus.ACCEPTED);
+        return new  ResponseEntity<>(userService.register(userDto.toUser()), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/confirmation")
     public ResponseEntity<UserDto> emailConfirmation(@RequestBody @Valid ConfirmationCodeDto confirmationCodeDto) {
         ConfirmationCode confirmationCode = confirmationCodeDto.toConfirmationCode();
 
-        User user = userService.toUser(userService.confirmEmail(confirmationCode));
+        User user = userService.confirmEmail(confirmationCode).toUser();
         if (user == null) {
             return new ResponseEntity<>(HttpStatus.GONE);
         }

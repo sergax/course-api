@@ -27,14 +27,15 @@ public class Course {
     private String description;
     @Column(name = "logo_url")
     private String logoUrl;
-    @Column(name = "movie_url")
-    private String movie_url;
+    @Column(name = "movieUrl")
+    private String movieUrl;
     @Column(name = "date_start")
     private LocalDate dateStart;
     @Column(name = "date_end")
     private LocalDate dateEnd;
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private Status status;
+    private CourseStatus courseStatus;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

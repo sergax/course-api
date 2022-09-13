@@ -3,6 +3,7 @@ package com.sergax.courseapi.controller;
 import com.sergax.courseapi.dto.ContentDto;
 import com.sergax.courseapi.dto.CourseDto;
 import com.sergax.courseapi.dto.UserDto;
+import com.sergax.courseapi.model.course.Course;
 import com.sergax.courseapi.service.ContentService;
 import com.sergax.courseapi.service.CourseService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/v1/courses")
@@ -22,19 +24,23 @@ public class CourseRestControllerV1 {
 
     @GetMapping("/all")
     public ResponseEntity<List<CourseDto>> findAllCourses() {
-        return ResponseEntity.ok(courseService.findAll());
+        var courseDto = courseService.findAll().stream()
+                .map(CourseDto::new)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(courseDto);
     }
 
     @GetMapping("/{courseId}")
     public ResponseEntity<CourseDto> findUserById(@PathVariable Long courseId) {
-        return ResponseEntity.ok(courseService.findById(courseId));
+        var courseById = courseService.findById(courseId);
+        return ResponseEntity.ok(new CourseDto(courseById));
     }
 
     @PostMapping
     public ResponseEntity<CourseDto> createCourseByMentor(@RequestBody CourseDto courseDto,
                                                           Principal principal) {
         return new ResponseEntity<>(
-                courseService.createCourseByMentor(courseDto, principal.getName()),
+                courseService.createCourseByMentor(courseDto.toCourse(), principal.getName()),
                 HttpStatus.CREATED);
     }
 
@@ -50,7 +56,8 @@ public class CourseRestControllerV1 {
     @PutMapping("/{courseId}")
     public ResponseEntity<CourseDto> updateUser(@PathVariable Long courseId,
                                                 @RequestBody CourseDto courseDto) {
-        return ResponseEntity.ok(courseService.update(courseId, courseDto));
+        var updatedCourse = courseService.update(courseId, courseDto.toCourse());
+        return ResponseEntity.ok(new CourseDto(updatedCourse));
     }
 
 }
