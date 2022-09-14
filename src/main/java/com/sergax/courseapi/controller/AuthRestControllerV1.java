@@ -2,8 +2,8 @@ package com.sergax.courseapi.controller;
 
 import com.sergax.courseapi.dto.*;
 import com.sergax.courseapi.model.user.ConfirmationCode;
-import com.sergax.courseapi.model.user.Role;
 import com.sergax.courseapi.model.Status;
+import com.sergax.courseapi.model.user.Role;
 import com.sergax.courseapi.model.user.User;
 import com.sergax.courseapi.security.JwtTokenProvider;
 import com.sergax.courseapi.service.iml.UserServiceIml;
@@ -34,7 +34,7 @@ public class AuthRestControllerV1 {
         String email = requestDto.getEmail();
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, requestDto.getPassword()));
 
-        User user = userService.findUserByEmail(email).toUser();
+        User user = userService.findUserByEmail(email);
 
         if (user.getStatus().equals(Status.NOT_ACTIVE)) {
             throw new EntityNotFoundException
@@ -54,7 +54,7 @@ public class AuthRestControllerV1 {
 
     @PostMapping("/registration")
     public ResponseEntity<UserDto> registration(@RequestBody UserDto userDto) {
-        return new  ResponseEntity<>(userService.register(userDto.toUser()), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(userService.register(userDto.toUser()), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/confirmation")

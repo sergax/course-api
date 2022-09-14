@@ -26,7 +26,9 @@ create table if not exists courses_mentors
     course_id bigint not null,
     mentor_id bigint not null,
     foreign key (course_id) references courses (id) on delete cascade,
-    foreign key (mentor_id) references users (id) on delete cascade
+    foreign key (mentor_id) references users (id) on delete cascade,
+
+    constraint program_mentor UNIQUE (course_id, mentor_id)
 );
 
 

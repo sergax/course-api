@@ -2,8 +2,6 @@ package com.sergax.courseapi.controller;
 
 import com.sergax.courseapi.dto.ContentDto;
 import com.sergax.courseapi.dto.CourseDto;
-import com.sergax.courseapi.dto.UserDto;
-import com.sergax.courseapi.model.course.Course;
 import com.sergax.courseapi.service.ContentService;
 import com.sergax.courseapi.service.CourseService;
 import lombok.RequiredArgsConstructor;

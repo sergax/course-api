@@ -3,8 +3,10 @@ package com.sergax.courseapi.dto;
 import com.sergax.courseapi.model.Status;
 import com.sergax.courseapi.model.course.Course;
 import com.sergax.courseapi.model.course.CourseStatus;
+import com.sergax.courseapi.model.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
@@ -16,7 +18,6 @@ import java.util.stream.Collectors;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Accessors(chain = true)
 public class CourseDto extends BaseEntityDto {
     private String name;
     private String description;
@@ -25,7 +26,7 @@ public class CourseDto extends BaseEntityDto {
     private LocalDate dateStart;
     private LocalDate dateEnd;
     private CourseStatus status;
-    private List<UserDto> mentors;
+    private List<Long> mentorsId;
     private List<ContentDto> contents;
 
     public CourseDto(Course course) {
@@ -40,8 +41,8 @@ public class CourseDto extends BaseEntityDto {
         if (course.getMentors() == null) {
             course.setMentors(new ArrayList<>());
         } else {
-            this.mentors = course.getMentors().stream()
-                    .map(UserDto::new)
+            this.mentorsId = course.getMentors().stream()
+                    .map(User::getId)
                     .collect(Collectors.toList());
         }
         if (course.getContents() == null) {
@@ -54,20 +55,6 @@ public class CourseDto extends BaseEntityDto {
     }
 
     public Course toCourse() {
-        //        if (this.getMentors() == null) {
-//            this.setMentors(new ArrayList<>());
-//        } else {
-//            course.setMentors(this.getMentors().stream()
-//                    .map(UserDto::toUser)
-//                    .collect(Collectors.toList()));
-//        }
-//        if (this.getContents() == null) {
-//            this.setContents(new ArrayList<>());
-//        } else {
-//            course.setContents(this.getContents().stream()
-//                    .map(ContentDto::toContent)
-//                    .collect(Collectors.toList()));
-//        }
         return new Course()
                 .setId(this.getId())
                 .setName(this.getName())

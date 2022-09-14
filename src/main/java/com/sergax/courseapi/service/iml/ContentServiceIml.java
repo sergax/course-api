@@ -46,11 +46,11 @@ public class ContentServiceIml implements ContentService {
     @Override
     @Transactional
     public ContentDto addContentToCourse(Long courseId, ContentDto contentDto, String mentorEmail) {
-        var mentorDto = userService.findUserByEmail(mentorEmail);
+        var mentor = userService.findUserByEmail(mentorEmail);
         var course = courseService.findById(courseId);
-        if (!courseService.isMentorInCourse(courseId, mentorDto.getId())) {
+        if (!courseService.existMentorInCourse(course.getId(), mentor.getId())) {
             throw new InvalidMentorException(
-                    format("User: %s not a mentor on this course: %s", mentorDto.getEmail(), course.getName()));
+                    format("User: %s not a mentor on this course: %s", mentor.getEmail(), course.getName()));
         }
         Content content = contentDto.toContent().setCourse(course);
         Content save = save(content);

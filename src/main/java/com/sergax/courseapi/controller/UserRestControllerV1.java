@@ -1,7 +1,6 @@
 package com.sergax.courseapi.controller;
 
 import com.sergax.courseapi.dto.UserDto;
-import com.sergax.courseapi.model.user.User;
 import com.sergax.courseapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -10,22 +10,12 @@ import java.util.stream.Collectors;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RoleDto extends BaseEntityDto {
     private String name;
-    private List<UserDto> users;
 
     public RoleDto(Role role) {
         this.id = role.getId();
         this.name = role.getName();
-        this.users = role.getUsers().stream()
-                .map(UserDto::new)
-                .collect(Collectors.toList());
     }
 
-    public Role toRole() {
-        return new Role()
-                .setId(this.id)
-                .setName(this.name);
-    }
 }

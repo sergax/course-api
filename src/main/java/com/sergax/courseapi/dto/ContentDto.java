@@ -6,16 +6,18 @@ import com.sergax.courseapi.model.course.Course;
 import com.sergax.courseapi.model.course.TypeContent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Accessors(chain = true)
 public class ContentDto extends BaseEntityDto {
+    @NotNull
     private String name;
     private String text;
     private String movieUrl;

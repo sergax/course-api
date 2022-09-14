@@ -1,8 +1,8 @@
 package com.sergax.courseapi.service.iml;
 
-import com.sergax.courseapi.dto.RoleDto;
 import com.sergax.courseapi.dto.UserDto;
 import com.sergax.courseapi.model.user.ConfirmationCode;
+import com.sergax.courseapi.model.user.Role;
 import com.sergax.courseapi.model.user.User;
 import com.sergax.courseapi.model.Status;
 import com.sergax.courseapi.repository.ConfirmationCodeRepository;
@@ -15,6 +15,7 @@ import com.sergax.courseapi.service.exception.NotUniqueDataException;
 import com.sergax.courseapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,6 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -60,7 +60,7 @@ public class UserServiceIml implements UserService {
     @Transactional
     public User save(User user) {
         userRepository.save(user);
-        log.info("IN create user: {}", user);
+        log.info("IN save user: {}", new UserDto(user));
         return user;
     }
 
@@ -93,11 +93,13 @@ public class UserServiceIml implements UserService {
     }
 
     @Override
-    public UserDto findUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .map(UserDto::new)
+    @Transactional
+    public User findUserByEmail(String email) {
+        var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException(
                         format("User by email: %s, not found", email)));
+        Hibernate.initialize(user.getRoles());
+        return user;
     }
 
     @Override
@@ -128,13 +130,18 @@ public class UserServiceIml implements UserService {
                     format("User by email: %s, already exists", user.getEmail()));
         }
         var role = roleService.findById(2L);
+        var roles = new ArrayList<Role>();
+        var users = new ArrayList<User>();
         user.setCreated(LocalDate.now());
         user.setUpdated(user.getCreated());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setStatus(Status.NOT_CONFIRMED);
-        user.setRoles(List.of(role));
+        roles.add(role);
+        user.setRoles(roles);
 
-        var registeredUser = userRepository.save(user);
+        var registeredUser = save(user);
+        users.add(registeredUser);
+        role.setUsers(users);
         var random = new Random();
         var code = random.nextInt(900_000) + 100_000;
         var expirationDate = LocalDate.now().plus(1L, ChronoUnit.DAYS);

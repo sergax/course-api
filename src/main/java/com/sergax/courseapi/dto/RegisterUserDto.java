@@ -3,6 +3,7 @@ package com.sergax.courseapi.dto;
 import com.sergax.courseapi.model.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -11,8 +12,8 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class RegisterUserDto {
     @Pattern(regexp = "^[A-Za-z,.'-]+$",
             message = "First name can contain only English alphabet letters, commas, dots, apostrophes and dashes")

@@ -1,6 +1,7 @@
 package com.sergax.courseapi.service.iml;
 
 import com.sergax.courseapi.dto.CourseDto;
+import com.sergax.courseapi.dto.UserDto;
 import com.sergax.courseapi.model.course.Course;
 import com.sergax.courseapi.model.course.CourseStatus;
 import com.sergax.courseapi.model.user.User;
@@ -43,7 +44,7 @@ public class CourseServiceIml implements CourseService {
                 .setDateStart(LocalDate.now());
         var savedCourse = courseRepository.save(course);
 
-        log.info("IN save course: {}", savedCourse);
+        log.info("IN save course: {}", new CourseDto(savedCourse));
         return savedCourse;
     }
 
@@ -51,8 +52,8 @@ public class CourseServiceIml implements CourseService {
     @Transactional
     public CourseDto createCourseByMentor(Course course, String mentorEmail) {
         var mentors = new ArrayList<User>();
-        var mentorDto = userService.findUserByEmail(mentorEmail);
-        mentors.add(mentorDto.toUser());
+        var mentor = userService.findUserByEmail(mentorEmail);
+        mentors.add(mentor);
         course.setMentors(mentors);
         var savedCourse = save(course);
 
@@ -85,8 +86,8 @@ public class CourseServiceIml implements CourseService {
     }
 
     @Override
-    public boolean isMentorInCourse(Long courseId, Long mentorId) {
-        return courseRepository.existsCourseByMentors(mentorId, courseId);
+    public boolean existMentorInCourse(Long courseId, Long mentorId) {
+        return courseRepository.existsCourseByMentorId(mentorId, courseId);
     }
 
 }
