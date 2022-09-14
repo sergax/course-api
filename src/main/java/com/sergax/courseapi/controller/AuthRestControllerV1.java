@@ -6,6 +6,7 @@ import com.sergax.courseapi.model.Status;
 import com.sergax.courseapi.model.user.Role;
 import com.sergax.courseapi.model.user.User;
 import com.sergax.courseapi.security.JwtTokenProvider;
+import com.sergax.courseapi.service.UserService;
 import com.sergax.courseapi.service.iml.UserServiceIml;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthRestControllerV1 {
     private final AuthenticationManager authenticationManager;
-    private final UserServiceIml userService;
+    private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/login")
