@@ -40,14 +40,14 @@ public class CourseDto extends BaseEntityDto {
         this.dateEnd = course.getDateEnd();
         this.status = course.getCourseStatus();
         if (course.getMentors() == null) {
-            course.setMentors(new ArrayList<>());
+            this.mentorsId = null;
         } else {
             this.mentorsId = course.getMentors().stream()
                     .map(User::getId)
                     .collect(Collectors.toList());
         }
         if (course.getContents() == null) {
-            course.setContents(new ArrayList<>());
+            this.contents = null;
         } else {
             this.contents = course.getContents().stream()
                     .map(ContentDto::new)

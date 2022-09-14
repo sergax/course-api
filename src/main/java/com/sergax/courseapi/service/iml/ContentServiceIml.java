@@ -1,7 +1,6 @@
 package com.sergax.courseapi.service.iml;
 
 import com.sergax.courseapi.dto.ContentDto;
-import com.sergax.courseapi.model.course.Content;
 import com.sergax.courseapi.model.course.TypeContent;
 import com.sergax.courseapi.repository.ContentRepository;
 import com.sergax.courseapi.service.ContentService;
@@ -54,10 +53,7 @@ public class ContentServiceIml implements ContentService {
     public ContentDto addContentToCourse(Long courseId, ContentDto contentDto, String mentorEmail) {
         var mentorDto = userService.findUserByEmail(mentorEmail);
         var courseDto = courseService.findById(courseId);
-        if (!courseService.existMentorInCourse(courseDto.getId(), mentorDto.getId())) {
-            throw new InvalidMentorException(
-                    format("User: %s not a mentor on this courseDto: %s", mentorDto.getEmail(), courseDto.getName()));
-        }
+        courseService.existMentorInCourse(courseDto.getId(), mentorDto.getId());
         setContentType(contentDto);
         var course = courseDto.toCourse();
         var content = contentDto.toContent().setCourse(course);
@@ -70,7 +66,8 @@ public class ContentServiceIml implements ContentService {
     @Override
     public ContentDto update(Long contentId, ContentDto contentDto) {
         var existingContent = findById(contentId);
-        existingContent.setName(contentDto.getName())
+        existingContent
+                .setName(contentDto.getName())
                 .setText(contentDto.getText())
                 .setMovieUrl(contentDto.getMovieUrl());
         setContentType(existingContent);

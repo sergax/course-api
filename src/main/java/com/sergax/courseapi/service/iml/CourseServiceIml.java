@@ -1,14 +1,12 @@
 package com.sergax.courseapi.service.iml;
 
 import com.sergax.courseapi.dto.CourseDto;
-import com.sergax.courseapi.dto.MentorDto;
-import com.sergax.courseapi.dto.UserDto;
-import com.sergax.courseapi.model.course.Course;
 import com.sergax.courseapi.model.course.CourseStatus;
 import com.sergax.courseapi.model.user.User;
 import com.sergax.courseapi.repository.CourseRepository;
 import com.sergax.courseapi.service.CourseService;
 import com.sergax.courseapi.service.UserService;
+import com.sergax.courseapi.service.exception.InvalidMentorException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,6 +17,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.lang.String.format;
 
 @Slf4j
 @Service
@@ -75,12 +75,13 @@ public class CourseServiceIml implements CourseService {
         existingCourse
                 .setName(courseDto.getName())
                 .setDescription(courseDto.getDescription())
+                .setStatus(courseDto.getStatus())
                 .setDateStart(courseDto.getDateStart())
                 .setDateEnd(courseDto.getDateEnd())
                 .setLogoUrl(courseDto.getLogoUrl())
                 .setMovieUrl(courseDto.getMovieUrl());
 
-        log.info("IN update course: <{}>", existingCourse);
+        log.info("IN update course: {}", existingCourse);
         return existingCourse;
     }
 
@@ -93,8 +94,11 @@ public class CourseServiceIml implements CourseService {
     }
 
     @Override
-    public boolean existMentorInCourse(Long courseId, Long mentorId) {
-        return courseRepository.existsCourseByMentorId(mentorId, courseId);
+    public void existMentorInCourse(Long courseId, Long mentorId) {
+        if (!courseRepository.existsCourseByMentorId(courseId, mentorId)) {
+            throw new InvalidMentorException(
+                    format("User ID: %d not a mentor on this course ID: %d", courseId, mentorId));
+        }
     }
 
 }
