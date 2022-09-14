@@ -69,7 +69,7 @@ class CourseServiceImlTest {
     }
 
     @Test
-    void save() {
+    void canSave() {
         var expectedCourse = new CourseDto(courseTest);
         when(courseRepository.save(courseTest)).thenReturn(courseTest);
 
@@ -78,7 +78,7 @@ class CourseServiceImlTest {
     }
 
     @Test
-    void createCourseByMentor() {
+    void canCreateCourseByMentor() {
         courseTest.setMentors(List.of(mentorTest));
         var courseDto = new CourseDto(courseTest);
         var mentorDto = new UserDto(mentorTest);
@@ -90,7 +90,7 @@ class CourseServiceImlTest {
     }
 
     @Test
-    void update() {
+    void canUpdateCourse() {
         var courseDto = new CourseDto(courseTest);
         courseDto.setName("new name")
                 .setStatus(CourseStatus.PUBLIC)
@@ -104,7 +104,7 @@ class CourseServiceImlTest {
     }
 
     @Test
-    void deleteById() {
+    void canDeleteCourseById() {
         var courseDto = new CourseDto(courseTest);
         courseDto.setStatus(CourseStatus.DELETED);
         when(courseRepository.findById(courseTest.getId())).thenReturn(Optional.of(courseTest));

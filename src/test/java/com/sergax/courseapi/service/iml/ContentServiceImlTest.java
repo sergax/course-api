@@ -12,7 +12,6 @@ import com.sergax.courseapi.repository.ContentRepository;
 import com.sergax.courseapi.repository.CourseRepository;
 import com.sergax.courseapi.service.CourseService;
 import com.sergax.courseapi.service.UserService;
-import com.sergax.courseapi.service.exception.InvalidMentorException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +22,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
@@ -61,17 +59,16 @@ class ContentServiceImlTest {
                 .setTypeContent(TypeContent.MIXED)
                 .setMovieUrl("https://music.youtube.com/playlist?list=RDCLAK5uy_mPolD_J22gS1SKxufARWcTZd1UrAH_0ZI")
                 .setCourse(courseTest);
-
     }
 
     @Test
-    void canFindAll() {
+    void canFindAllContents() {
         contentServiceImlMock.findAll();
         verify(contentRepositoryMock).findAll();
     }
 
     @Test
-    void canFindById() {
+    void canFindContentById() {
         when(contentRepositoryMock.findById(anyLong())).thenReturn(Optional.of(new Content()));
         contentServiceImlMock.findById(anyLong());
         verify(contentRepositoryMock).findById(anyLong());
@@ -115,7 +112,7 @@ class ContentServiceImlTest {
     }
 
     @Test
-    void deleteById() {
+    void canDeleteContentById() {
         contentServiceImlMock.deleteById(contentTest.getId());
         verify(contentRepositoryMock).deleteById(contentTest.getId());
     }
