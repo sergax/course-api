@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,29 +19,23 @@ public class UserRestControllerV1 {
 
     @GetMapping("/all")
     public ResponseEntity<List<UserDto>> findAllUsers() {
-        var usersDto = userService.findAll().stream()
-                .map(UserDto::new)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(usersDto);
+        return ResponseEntity.ok(userService.findAll());
     }
 
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> findUserById(@PathVariable Long userId) {
-        var userById = userService.findById(userId);
-        return ResponseEntity.ok(new UserDto(userById));
+        return ResponseEntity.ok(userService.findById(userId));
     }
 
     @PostMapping
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
-        var savedUser = userService.save(userDto.toUser());
-        return new ResponseEntity<>(new UserDto(savedUser), HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.save(userDto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{userId}")
     public ResponseEntity<UserDto> updateUser(@PathVariable Long userId,
                                               @RequestBody UserDto userDto) {
-        var updatedUser = userService.update(userId, userDto.toUser());
-        return ResponseEntity.ok(new UserDto(updatedUser));
+        return ResponseEntity.ok(userService.update(userId, userDto));
     }
 
     @PatchMapping("/{userId}/{roleId}")

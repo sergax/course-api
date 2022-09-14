@@ -16,11 +16,13 @@ import java.util.ArrayList;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Accessors(chain = true)
 public class ContentDto extends BaseEntityDto {
     @NotNull
     private String name;
     private String text;
     private String movieUrl;
+    @NotNull
     private TypeContent typeContent;
 
     public ContentDto(Content content) {

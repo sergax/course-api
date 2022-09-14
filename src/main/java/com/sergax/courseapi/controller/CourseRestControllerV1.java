@@ -22,23 +22,19 @@ public class CourseRestControllerV1 {
 
     @GetMapping("/all")
     public ResponseEntity<List<CourseDto>> findAllCourses() {
-        var courseDto = courseService.findAll().stream()
-                .map(CourseDto::new)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(courseDto);
+        return ResponseEntity.ok(courseService.findAll());
     }
 
     @GetMapping("/{courseId}")
     public ResponseEntity<CourseDto> findUserById(@PathVariable Long courseId) {
-        var courseById = courseService.findById(courseId);
-        return ResponseEntity.ok(new CourseDto(courseById));
+        return ResponseEntity.ok(courseService.findById(courseId));
     }
 
     @PostMapping
     public ResponseEntity<CourseDto> createCourseByMentor(@RequestBody CourseDto courseDto,
                                                           Principal principal) {
         return new ResponseEntity<>(
-                courseService.createCourseByMentor(courseDto.toCourse(), principal.getName()),
+                courseService.createCourseByMentor(courseDto, principal.getName()),
                 HttpStatus.CREATED);
     }
 
@@ -54,8 +50,7 @@ public class CourseRestControllerV1 {
     @PutMapping("/{courseId}")
     public ResponseEntity<CourseDto> updateUser(@PathVariable Long courseId,
                                                 @RequestBody CourseDto courseDto) {
-        var updatedCourse = courseService.update(courseId, courseDto.toCourse());
-        return ResponseEntity.ok(new CourseDto(updatedCourse));
+        return ResponseEntity.ok(courseService.update(courseId, courseDto));
     }
 
 }

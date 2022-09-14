@@ -1,6 +1,7 @@
 package com.sergax.courseapi.service.iml;
 
 import com.sergax.courseapi.dto.CourseDto;
+import com.sergax.courseapi.dto.MentorDto;
 import com.sergax.courseapi.dto.UserDto;
 import com.sergax.courseapi.model.course.Course;
 import com.sergax.courseapi.model.course.CourseStatus;
@@ -17,8 +18,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.lang.String.format;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -28,61 +28,68 @@ public class CourseServiceIml implements CourseService {
     private final UserService userService;
 
     @Override
-    public List<Course> findAll() {
-        return courseRepository.findAll();
+    public List<CourseDto> findAll() {
+        return courseRepository.findAll().stream()
+                .map(CourseDto::new)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Course findById(Long courseId) {
+    public CourseDto findById(Long courseId) {
         return courseRepository.findById(courseId)
+                .map(CourseDto::new)
                 .orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
-    public Course save(Course course) {
-        course.setCourseStatus(CourseStatus.PRIVATE)
+    public CourseDto save(CourseDto courseDto) {
+        courseDto.setStatus(CourseStatus.PRIVATE)
                 .setDateStart(LocalDate.now());
+        var course = courseDto.toCourse();
         var savedCourse = courseRepository.save(course);
 
         log.info("IN save course: {}", new CourseDto(savedCourse));
-        return savedCourse;
-    }
-
-    @Override
-    @Transactional
-    public CourseDto createCourseByMentor(Course course, String mentorEmail) {
-        var mentors = new ArrayList<User>();
-        var mentor = userService.findUserByEmail(mentorEmail);
-        mentors.add(mentor);
-        course.setMentors(mentors);
-        var savedCourse = save(course);
-
-        log.info("IN createCourseByMentor: <{}> course created", new CourseDto(savedCourse));
         return new CourseDto(savedCourse);
     }
 
     @Override
     @Transactional
-    public Course update(Long courseId, Course course) {
+    public CourseDto createCourseByMentor(CourseDto courseDto, String mentorEmail) {
+        var mentors = new ArrayList<User>();
+        var mentor = userService.findUserByEmail(mentorEmail).toUser();
+        mentors.add(mentor);
+        courseDto.setStatus(CourseStatus.PRIVATE)
+                .setDateStart(LocalDate.now());
+        var course = courseDto.toCourse();
+        course.setMentors(mentors);
+        var savedCourse = courseRepository.save(course);
+
+        log.info("IN createCourseByMentor: {} course created", new CourseDto(savedCourse));
+        return new CourseDto(savedCourse);
+    }
+
+    @Override
+    @Transactional
+    public CourseDto update(Long courseId, CourseDto courseDto) {
         var existingCourse = findById(courseId);
         existingCourse
-                .setName(course.getName())
-                .setDescription(course.getDescription())
-                .setDateStart(course.getDateStart())
-                .setDateEnd(course.getDateEnd())
-                .setLogoUrl(course.getLogoUrl())
-                .setMovieUrl(course.getMovieUrl());
+                .setName(courseDto.getName())
+                .setDescription(courseDto.getDescription())
+                .setDateStart(courseDto.getDateStart())
+                .setDateEnd(courseDto.getDateEnd())
+                .setLogoUrl(courseDto.getLogoUrl())
+                .setMovieUrl(courseDto.getMovieUrl());
 
-        log.info("IN update course: <{}>", new CourseDto(existingCourse));
+        log.info("IN update course: <{}>", existingCourse);
         return existingCourse;
     }
 
     @Override
     public void deleteById(Long courseId) {
         var existingCourse = findById(courseId);
-        existingCourse.setCourseStatus(CourseStatus.DELETED);
+        existingCourse.setStatus(CourseStatus.DELETED);
 
-        log.info("IN deleteById course: <{}>", new CourseDto(existingCourse));
+        log.info("IN deleteById course: <{}>", existingCourse);
     }
 
     @Override

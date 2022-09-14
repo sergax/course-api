@@ -1,13 +1,11 @@
 package com.sergax.courseapi.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sergax.courseapi.model.user.Role;
 import com.sergax.courseapi.model.user.User;
 import com.sergax.courseapi.model.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,6 +14,7 @@ import java.util.stream.Collectors;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Accessors(chain = true)
 public class UserDto extends BaseEntityDto {
     private String firstName;
     private String lastName;
@@ -49,7 +48,10 @@ public class UserDto extends BaseEntityDto {
                 .setEmail(this.getEmail())
                 .setCreated(this.getCreated())
                 .setUpdated(this.getUpdated())
-                .setStatus(this.getStatus());
+                .setStatus(this.getStatus())
+                .setRoles(this.getRoles().stream()
+                        .map(RoleDto::toRole)
+                        .collect(Collectors.toList()));
     }
 
 }

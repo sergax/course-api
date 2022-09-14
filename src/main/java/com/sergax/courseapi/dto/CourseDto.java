@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Accessors(chain = true)
 public class CourseDto extends BaseEntityDto {
     private String name;
     private String description;

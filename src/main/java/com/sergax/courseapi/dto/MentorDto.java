@@ -17,7 +17,7 @@ public class MentorDto extends BaseEntityDto {
     private String firstName;
     private String lastName;
     private String email;
-    private List<String> roles;
+    private List<RoleDto> roles;
 
     public MentorDto(User mentor) {
         this.id = mentor.getId();
@@ -25,8 +25,19 @@ public class MentorDto extends BaseEntityDto {
         this.lastName = mentor.getLastName();
         this.email = mentor.getEmail();
         this.roles = mentor.getRoles().stream()
-                .map(Role::getName)
+                .map(RoleDto::new)
                 .collect(Collectors.toList());
+    }
+
+    public User toMentor() {
+        return new User()
+                .setId(this.id)
+                .setFirstName(this.firstName)
+                .setLastName(this.lastName)
+                .setEmail(this.email)
+                .setRoles(this.roles.stream()
+                        .map(RoleDto::toRole)
+                        .collect(Collectors.toList()));
     }
 
 }

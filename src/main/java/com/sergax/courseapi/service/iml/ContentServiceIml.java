@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -27,44 +28,51 @@ public class ContentServiceIml implements ContentService {
     private final CourseService courseService;
 
     @Override
-    public List<Content> findAll() {
-        return contentRepository.findAll();
+    public List<ContentDto> findAll() {
+        return contentRepository.findAll().stream()
+                .map(ContentDto::new)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Content findById(Long contentId) {
+    public ContentDto findById(Long contentId) {
         return contentRepository.findById(contentId)
+                .map(ContentDto::new)
                 .orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
-    public Content save(Content content) {
-        setContentType(content);
-        return contentRepository.save(content);
+    public ContentDto save(ContentDto contentDto) {
+        setContentType(contentDto);
+        var content = contentDto.toContent();
+        var savedContent = contentRepository.save(content);
+        return new ContentDto(savedContent);
     }
 
     @Override
     @Transactional
     public ContentDto addContentToCourse(Long courseId, ContentDto contentDto, String mentorEmail) {
-        var mentor = userService.findUserByEmail(mentorEmail);
-        var course = courseService.findById(courseId);
-        if (!courseService.existMentorInCourse(course.getId(), mentor.getId())) {
+        var mentorDto = userService.findUserByEmail(mentorEmail);
+        var courseDto = courseService.findById(courseId);
+        if (!courseService.existMentorInCourse(courseDto.getId(), mentorDto.getId())) {
             throw new InvalidMentorException(
-                    format("User: %s not a mentor on this course: %s", mentor.getEmail(), course.getName()));
+                    format("User: %s not a mentor on this courseDto: %s", mentorDto.getEmail(), courseDto.getName()));
         }
-        Content content = contentDto.toContent().setCourse(course);
-        Content save = save(content);
+        setContentType(contentDto);
+        var course = courseDto.toCourse();
+        var content = contentDto.toContent().setCourse(course);
+        var savedContent = contentRepository.save(content);
 
-        log.info("IN addContentToCourse: {}", new ContentDto(save));
-        return new ContentDto(save);
+        log.info("IN addContentToCourse: {}", new ContentDto(savedContent));
+        return new ContentDto(savedContent);
     }
 
     @Override
-    public Content update(Long contentId, Content content) {
+    public ContentDto update(Long contentId, ContentDto contentDto) {
         var existingContent = findById(contentId);
-        existingContent.setName(content.getName())
-                .setText(content.getText())
-                .setMovieUrl(content.getMovieUrl());
+        existingContent.setName(contentDto.getName())
+                .setText(contentDto.getText())
+                .setMovieUrl(contentDto.getMovieUrl());
         setContentType(existingContent);
 
         log.info("IN update content: {}", existingContent);
@@ -77,15 +85,15 @@ public class ContentServiceIml implements ContentService {
         log.info("IN deleteById content by ID: {}", contentId);
     }
 
-    private void setContentType(Content content) {
-        if (content.getText() != null && content.getMovieUrl() != null) {
-            content.setTypeContent(TypeContent.MIXED);
-        } else if (content.getText() != null) {
-            content.setTypeContent(TypeContent.TEXT);
-        } else if (content.getMovieUrl() != null) {
-            content.setTypeContent(TypeContent.VIDEO);
+    private void setContentType(ContentDto contentDto) {
+        if (contentDto.getText() != null && contentDto.getMovieUrl() != null) {
+            contentDto.setTypeContent(TypeContent.MIXED);
+        } else if (contentDto.getText() != null) {
+            contentDto.setTypeContent(TypeContent.TEXT);
+        } else if (contentDto.getMovieUrl() != null) {
+            contentDto.setTypeContent(TypeContent.VIDEO);
         } else {
-            content.setTypeContent(TypeContent.MIXED);
+            contentDto.setTypeContent(TypeContent.MIXED);
         }
     }
 

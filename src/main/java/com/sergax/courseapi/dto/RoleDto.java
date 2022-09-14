@@ -18,4 +18,10 @@ public class RoleDto extends BaseEntityDto {
         this.name = role.getName();
     }
 
+    public Role toRole() {
+        return new Role()
+                .setId(this.id)
+                .setName(this.name);
+    }
+
 }

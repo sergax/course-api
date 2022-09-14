@@ -1,9 +1,8 @@
 package com.sergax.courseapi.service.iml;
 
+import com.sergax.courseapi.dto.RoleDto;
 import com.sergax.courseapi.dto.UserDto;
 import com.sergax.courseapi.model.user.ConfirmationCode;
-import com.sergax.courseapi.model.user.Role;
-import com.sergax.courseapi.model.user.User;
 import com.sergax.courseapi.model.Status;
 import com.sergax.courseapi.repository.ConfirmationCodeRepository;
 import com.sergax.courseapi.repository.UserRepository;
@@ -24,6 +23,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -45,44 +45,48 @@ public class UserServiceIml implements UserService {
 //    private String baseUrl;
 
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<UserDto> findAll() {
+        return userRepository.findAll().stream()
+                .map(UserDto::new)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public User findById(Long id) {
+    public UserDto findById(Long id) {
         return userRepository.findById(id)
+                .map(UserDto::new)
                 .orElseThrow(() -> new EntityNotFoundException(
                         format("User by ID: %d not found", id)));
     }
 
     @Override
     @Transactional
-    public User save(User user) {
+    public UserDto save(UserDto userDto) {
+        var user = userDto.toUser();
         userRepository.save(user);
         log.info("IN save user: {}", new UserDto(user));
-        return user;
+        return new UserDto(user);
     }
 
     @Override
     @Transactional
-    public User update(Long userId, User user) {
-        User userById = findById(userId);
-        if (existsUserByEmail(user.getEmail())) {
+    public UserDto update(Long userId, UserDto userDto) {
+        var userById = findById(userId);
+        if (existsUserByEmail(userById.getEmail())) {
             throw new NotUniqueDataException(
-                    format("User by email: %s , already exists", user.getEmail()));
+                    format("User by email: %s , already exists", userById.getEmail()));
         }
         userById
-                .setEmail(user.getEmail())
+                .setEmail(userDto.getEmail())
                 .setUpdated(LocalDate.now())
-                .setPassword(user.getPassword())
-                .setFirstName(user.getFirstName())
-                .setLastName(user.getLastName())
-                .setRoles(user.getRoles());
+                .setPassword(userById.getPassword())
+                .setFirstName(userDto.getFirstName())
+                .setLastName(userDto.getLastName())
+                .setRoles(userDto.getRoles());
 
-        userRepository.save(userById);
-        log.info("In update user: {}", userById);
-        return userById;
+        UserDto savedUser = save(userById);
+        log.info("In update user: {}", savedUser);
+        return savedUser;
     }
 
     @Override
@@ -94,12 +98,12 @@ public class UserServiceIml implements UserService {
 
     @Override
     @Transactional
-    public User findUserByEmail(String email) {
+    public UserDto findUserByEmail(String email) {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException(
                         format("User by email: %s, not found", email)));
         Hibernate.initialize(user.getRoles());
-        return user;
+        return new UserDto(user);
     }
 
     @Override
@@ -114,46 +118,46 @@ public class UserServiceIml implements UserService {
         var role = roleService.findById(roleId);
 
         user.getRoles().add(role);
-        role.getUsers().add(user);
-        userRepository.save(user);
+//        role.getUsers().add(user);
+        var savedUser = save(user);
         roleService.save(role);
 
-        log.info("IN addRoleForUserByEmail: {}", new UserDto(user));
-        return new UserDto(user);
+        log.info("IN addRoleForUserByEmail: {}", savedUser);
+        return savedUser;
     }
 
     @Override
     @Transactional
-    public UserDto register(User user) {
-        if (existsUserByEmail(user.getEmail())) {
+    public UserDto register(UserDto userDto) {
+        if (existsUserByEmail(userDto.getEmail())) {
             throw new NotUniqueDataException(
-                    format("User by email: %s, already exists", user.getEmail()));
+                    format("User by email: %s, already exists", userDto.getEmail()));
         }
         var role = roleService.findById(2L);
-        var roles = new ArrayList<Role>();
-        var users = new ArrayList<User>();
-        user.setCreated(LocalDate.now());
-        user.setUpdated(user.getCreated());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setStatus(Status.NOT_CONFIRMED);
+        var roles = new ArrayList<RoleDto>();
+        var users = new ArrayList<UserDto>();
+        userDto.setCreated(LocalDate.now());
+        userDto.setUpdated(userDto.getCreated());
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        userDto.setStatus(Status.NOT_CONFIRMED);
         roles.add(role);
-        user.setRoles(roles);
+        userDto.setRoles(roles);
 
-        var registeredUser = save(user);
-        users.add(registeredUser);
-        role.setUsers(users);
+        var registeredUser = save(userDto);
+//        users.add(registeredUser);
+//        role.setUsers(users);
         var random = new Random();
         var code = random.nextInt(900_000) + 100_000;
         var expirationDate = LocalDate.now().plus(1L, ChronoUnit.DAYS);
         var confirmationCode = new ConfirmationCode(
                 String.valueOf(code),
-                user.getEmail(),
+                userDto.getEmail(),
                 expirationDate,
                 Status.ACTIVE);
         confirmationCodeRepository.save(confirmationCode);
 
-        log.info("IN register user: {} registered", new UserDto(registeredUser));
-        return new UserDto(registeredUser);
+        log.info("IN register user: {} registered", registeredUser);
+        return registeredUser;
     }
 
     @Override

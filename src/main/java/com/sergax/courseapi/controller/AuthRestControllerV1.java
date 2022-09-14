@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/v1/auth")
@@ -34,7 +33,7 @@ public class AuthRestControllerV1 {
         String email = requestDto.getEmail();
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, requestDto.getPassword()));
 
-        User user = userService.findUserByEmail(email);
+        User user = userService.findUserByEmail(email).toUser();
 
         if (user.getStatus().equals(Status.NOT_ACTIVE)) {
             throw new EntityNotFoundException
@@ -43,8 +42,7 @@ public class AuthRestControllerV1 {
 
         String token = jwtTokenProvider.createToken(user);
         List<String> roles = user.getRoles()
-                .stream().map(Role::getName)
-                .collect(Collectors.toList());
+                .stream().map(Role::getName).toList();
 
         String role = roles.contains("ROLE_ADMIN") ? "ADMIN" : "USER";
 
@@ -54,7 +52,7 @@ public class AuthRestControllerV1 {
 
     @PostMapping("/registration")
     public ResponseEntity<UserDto> registration(@RequestBody UserDto userDto) {
-        return new ResponseEntity<>(userService.register(userDto.toUser()), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(userService.register(userDto), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/confirmation")
