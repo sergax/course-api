@@ -116,14 +116,10 @@ public class UserServiceIml implements UserService {
     public UserDto addRoleForUserById(Long userId, Long roleId) {
         var user = findById(userId);
         var role = roleService.findById(roleId);
-
         user.getRoles().add(role);
-//        role.getUsers().add(user);
-        var savedUser = save(user);
-        roleService.save(role);
 
-        log.info("IN addRoleForUserByEmail: {}", savedUser);
-        return savedUser;
+        log.info("IN addRoleForUserByEmail: {}", user);
+        return user;
     }
 
     @Override
@@ -135,7 +131,6 @@ public class UserServiceIml implements UserService {
         }
         var role = roleService.findById(2L);
         var roles = new ArrayList<RoleDto>();
-        var users = new ArrayList<UserDto>();
         userDto.setCreated(LocalDate.now());
         userDto.setUpdated(userDto.getCreated());
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
@@ -144,8 +139,6 @@ public class UserServiceIml implements UserService {
         userDto.setRoles(roles);
 
         var registeredUser = save(userDto);
-//        users.add(registeredUser);
-//        role.setUsers(users);
         var random = new Random();
         var code = random.nextInt(900_000) + 100_000;
         var expirationDate = LocalDate.now().plus(1L, ChronoUnit.DAYS);
