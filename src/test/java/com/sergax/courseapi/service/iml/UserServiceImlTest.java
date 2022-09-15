@@ -86,7 +86,7 @@ class UserServiceImlTest {
         expectedUser
                 .setFirstName("new name")
                 .setEmail("newMentor@mail.com");
-        when(userRepositoryMock.findById(userTest.getId())).thenReturn(Optional.of(userTest));
+        when(userRepositoryMock.getById(userTest.getId())).thenReturn(userTest);
         var actualUser = userServiceImlTest.update(expectedUser.getId(), expectedUser);
         assertEquals("new name", actualUser.getFirstName());
         assertEquals("newMentor@mail.com", actualUser.getEmail());

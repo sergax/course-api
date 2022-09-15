@@ -60,9 +60,10 @@ public class ContentServiceIml implements ContentService {
         var courseDto = courseService.findById(courseId);
         courseService.existMentorInCourse(courseDto.getId(), mentorDto.getId());
         isUrlValid(contentDto.getMovieUrl());
-        setContentType(contentDto.toContent());
+        var content = contentDto.toContent();
         var course = courseDto.toCourse();
-        var content = contentDto.toContent().setCourse(course);
+        setContentType(content);
+        content.setCourse(course);
         var savedContent = contentRepository.save(content);
 
         log.info("IN addContentToCourse: {}", new ContentDto(savedContent));
@@ -78,7 +79,6 @@ public class ContentServiceIml implements ContentService {
                 .setText(contentDto.getText())
                 .setMovieUrl(contentDto.getMovieUrl());
         setContentType(existingContent);
-
         return new ContentDto(existingContent);
     }
 

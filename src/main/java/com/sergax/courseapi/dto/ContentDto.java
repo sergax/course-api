@@ -20,9 +20,7 @@ public class ContentDto extends BaseEntityDto {
     private String name;
     private String text;
     private String movieUrl;
-    @NotNull
     private TypeContent typeContent;
-    private Long courseId;
 
     public ContentDto(Content content) {
         this.id = content.getId();

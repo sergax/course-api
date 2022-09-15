@@ -70,22 +70,16 @@ public class UserServiceIml implements UserService {
     @Override
     @Transactional
     public UserDto update(Long userId, UserDto userDto) {
-        var userById = findById(userId);
-        if (existsUserByEmail(userById.getEmail())) {
-            throw new NotUniqueDataException(
-                    format("User by email: %s , already exists", userById.getEmail()));
-        }
+        var userById = userRepository.getById(userId);
         userById
                 .setEmail(userDto.getEmail())
                 .setUpdated(LocalDate.now())
                 .setPassword(userById.getPassword())
                 .setFirstName(userDto.getFirstName())
-                .setLastName(userDto.getLastName())
-                .setRoles(userDto.getRoles());
+                .setLastName(userDto.getLastName());
 
-        UserDto savedUser = save(userById);
-        log.info("In update user: {}", savedUser);
-        return savedUser;
+        log.info("In update user: {}", new UserDto(userById));
+        return new UserDto(userById);
     }
 
     @Override

@@ -49,8 +49,9 @@ public class CourseRestControllerV1 {
 
     @PutMapping("/{courseId}")
     public ResponseEntity<CourseDto> updateCourse(@PathVariable Long courseId,
-                                                  @RequestBody CourseDto courseDto) {
-        return ResponseEntity.ok(courseService.update(courseId, courseDto));
+                                                  @RequestBody CourseDto courseDto,
+                                                  Principal principal) {
+        return ResponseEntity.ok(courseService.updateCourseByMentor(courseId, courseDto, principal.getName()));
     }
 
     @PutMapping("/contents/{contentId}")

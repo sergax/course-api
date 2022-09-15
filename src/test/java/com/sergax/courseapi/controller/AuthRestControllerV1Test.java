@@ -1,9 +1,6 @@
 package com.sergax.courseapi.controller;
 
-import com.sergax.courseapi.dto.ConfirmationCodeDto;
-import com.sergax.courseapi.dto.LoginRequestDto;
-import com.sergax.courseapi.dto.RoleDto;
-import com.sergax.courseapi.dto.UserDto;
+import com.sergax.courseapi.dto.*;
 import com.sergax.courseapi.model.Status;
 import com.sergax.courseapi.model.user.ConfirmationCode;
 import com.sergax.courseapi.security.JwtTokenProvider;
@@ -38,6 +35,7 @@ class AuthRestControllerV1Test {
     private final LoginRequestDto loginRequestDto = new LoginRequestDto();
     private final UserDto userDto = new UserDto();
     private final RoleDto roleDto = new RoleDto();
+    private final RegistrationDto registrationDto = new RegistrationDto();
     private final ConfirmationCodeDto confirmationCodeDto = new ConfirmationCodeDto();
     private final ConfirmationCode confirmationCode = new ConfirmationCode();
 
@@ -65,8 +63,9 @@ class AuthRestControllerV1Test {
 
     @Test
     void registration() {
-        authRestControllerV1UnderTest.registration(userDto);
-        verify(userServiceMock).register(userDto);
+        var registerUserDto = registrationDto.toUserDto();
+        authRestControllerV1UnderTest.registration(registrationDto);
+        verify(userServiceMock).register(registerUserDto);
     }
 
     @Test

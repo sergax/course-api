@@ -42,7 +42,8 @@ public class CourseServiceIml implements CourseService {
     public CourseDto findById(Long courseId) {
         return courseRepository.findById(courseId)
                 .map(CourseDto::new)
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(() -> new EntityNotFoundException(
+                        format("Course by ID: %d not found", courseId)));
     }
 
     @Override
@@ -109,7 +110,7 @@ public class CourseServiceIml implements CourseService {
     }
 
     @Override
-    public void existMentorInCourse(Long mentorId,Long courseId) {
+    public void existMentorInCourse(Long courseId, Long mentorId) {
         if (!courseRepository.existsCourseByMentorId(courseId, mentorId)) {
             throw new InvalidMentorException(
                     format("User ID: %d not a mentor on this course ID: %d", mentorId, courseId));

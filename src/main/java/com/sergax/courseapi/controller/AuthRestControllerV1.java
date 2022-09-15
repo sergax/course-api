@@ -51,7 +51,8 @@ public class AuthRestControllerV1 {
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<UserDto> registration(@RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> registration(@RequestBody @Valid RegistrationDto registrationDto) {
+        var userDto = registrationDto.toUserDto();
         return new ResponseEntity<>(userService.register(userDto), HttpStatus.ACCEPTED);
     }
 
