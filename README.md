@@ -1,5 +1,5 @@
 
-# This app allow you create a new course for students 🚀
+# App allow you create a new course for students 🚀
  
 ## Technologies:
  - SpringBoot
