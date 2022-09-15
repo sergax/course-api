@@ -70,7 +70,7 @@ class CourseRestControllerV1Test {
 
     @Test
     void updateUser() {
-        courseRestControllerV1Test.updateUser(1L, courseDtoTest);
+        courseRestControllerV1Test.updateCourse(1L, courseDtoTest);
         verify(courseServiceMock).update(1L, courseDtoTest);
     }
 }

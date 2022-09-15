@@ -95,7 +95,7 @@ class CourseServiceImlTest {
         courseDto.setName("new name")
                 .setStatus(CourseStatus.PUBLIC)
                 .setDateEnd(LocalDate.now().plusDays(1L));
-        when(courseRepository.findById(courseTest.getId())).thenReturn(Optional.of(courseTest));
+        when(courseRepository.getById(courseTest.getId())).thenReturn(courseTest);
 
         var updatedCourse = courseServiceIml.update(courseDto.getId(), courseDto);
         assertEquals("new name", updatedCourse.getName());
@@ -120,6 +120,6 @@ class CourseServiceImlTest {
         assertThatThrownBy(() -> courseServiceIml.existMentorInCourse(
                 mentorTest.getId(), courseTest.getId()))
                 .isInstanceOf(InvalidMentorException.class)
-                .hasMessage("User ID: %d not a mentor on this course ID: %s", mentorTest.getId(), courseTest.getId());
+                .hasMessage("User ID: %d not a mentor on this course ID: %d", mentorTest.getId(), courseTest.getId());
     }
 }

@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper=false)
 public class RoleDto extends BaseEntityDto {
     private String name;
 

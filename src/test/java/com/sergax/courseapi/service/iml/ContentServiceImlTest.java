@@ -77,8 +77,8 @@ class ContentServiceImlTest {
     @Test
     void canSaveContent() {
         var content = new Content();
-        content.setTypeContent(TypeContent.MIXED);
-        var expectedContentDto = new ContentDto();
+        content.setTypeContent(TypeContent.NO_CONTENT);
+        var expectedContentDto = new ContentDto(content);
         when(contentRepositoryMock.save(content)).thenReturn(content);
 
         var actualContent = contentServiceImlMock.save(expectedContentDto);
@@ -103,7 +103,7 @@ class ContentServiceImlTest {
         contentDto.setName("new name");
         contentDto.setText("new text");
         contentDto.setMovieUrl(null);
-        when(contentRepositoryMock.findById(anyLong())).thenReturn(Optional.of(contentTest));
+        when(contentRepositoryMock.getById(anyLong())).thenReturn(contentTest);
 
         var actualContent = contentServiceImlMock.update(contentDto.getId(), contentDto);
         assertEquals("new name", actualContent.getName());

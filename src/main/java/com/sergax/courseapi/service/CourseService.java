@@ -5,5 +5,6 @@ import com.sergax.courseapi.model.course.Course;
 
 public interface CourseService extends BaseService<CourseDto, Long> {
     CourseDto createCourseByMentor(CourseDto courseDto, String mentorEmail);
+    CourseDto updateCourseByMentor(Long courseId, CourseDto courseDto, String mentorEmail);
     void existMentorInCourse(Long courseId, Long mentorId);
 }

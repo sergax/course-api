@@ -1,18 +1,23 @@
 package com.sergax.courseapi.service.iml;
 
 import com.sergax.courseapi.dto.ContentDto;
+import com.sergax.courseapi.dto.UserDto;
+import com.sergax.courseapi.model.course.Content;
 import com.sergax.courseapi.model.course.TypeContent;
 import com.sergax.courseapi.repository.ContentRepository;
 import com.sergax.courseapi.service.ContentService;
 import com.sergax.courseapi.service.CourseService;
 import com.sergax.courseapi.service.UserService;
-import com.sergax.courseapi.service.exception.InvalidMentorException;
+import com.sergax.courseapi.service.exception.InvalidUrlException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,9 +47,9 @@ public class ContentServiceIml implements ContentService {
 
     @Override
     public ContentDto save(ContentDto contentDto) {
-        setContentType(contentDto);
-        var content = contentDto.toContent();
-        var savedContent = contentRepository.save(content);
+        var newContent = contentDto.toContent();
+        setContentType(newContent);
+        var savedContent = contentRepository.save(newContent);
         return new ContentDto(savedContent);
     }
 
@@ -54,7 +59,8 @@ public class ContentServiceIml implements ContentService {
         var mentorDto = userService.findUserByEmail(mentorEmail);
         var courseDto = courseService.findById(courseId);
         courseService.existMentorInCourse(courseDto.getId(), mentorDto.getId());
-        setContentType(contentDto);
+        isUrlValid(contentDto.getMovieUrl());
+        setContentType(contentDto.toContent());
         var course = courseDto.toCourse();
         var content = contentDto.toContent().setCourse(course);
         var savedContent = contentRepository.save(content);
@@ -65,15 +71,27 @@ public class ContentServiceIml implements ContentService {
 
     @Override
     public ContentDto update(Long contentId, ContentDto contentDto) {
-        var existingContent = findById(contentId);
+        var existingContent = contentRepository.getById(contentId);
+        isUrlValid(contentDto.getMovieUrl());
         existingContent
                 .setName(contentDto.getName())
                 .setText(contentDto.getText())
                 .setMovieUrl(contentDto.getMovieUrl());
         setContentType(existingContent);
 
-        log.info("IN update content: {}", existingContent);
-        return existingContent;
+        return new ContentDto(existingContent);
+    }
+
+    @Override
+    @Transactional
+    public ContentDto updateContentByMentor(Long contentId, ContentDto contentDto, String mentorEmail) {
+        var userId = userService.findUserByEmail(mentorEmail).getId();
+        var courseId = contentRepository.getById(contentId).getCourse().getId();
+        courseService.existMentorInCourse(courseId, userId);
+        var updatedContent = update(contentId, contentDto);
+
+        log.info("IN updateContentByMentor : {}", updatedContent);
+        return updatedContent;
     }
 
     @Override
@@ -82,15 +100,26 @@ public class ContentServiceIml implements ContentService {
         log.info("IN deleteById content by ID: {}", contentId);
     }
 
-    private void setContentType(ContentDto contentDto) {
-        if (contentDto.getText() != null && contentDto.getMovieUrl() != null) {
-            contentDto.setTypeContent(TypeContent.MIXED);
-        } else if (contentDto.getText() != null) {
-            contentDto.setTypeContent(TypeContent.TEXT);
-        } else if (contentDto.getMovieUrl() != null) {
-            contentDto.setTypeContent(TypeContent.VIDEO);
+    private void setContentType(Content content) {
+        if (content.getText() != null && content.getMovieUrl() != null) {
+            content.setTypeContent(TypeContent.MIXED);
+        } else if (content.getText() != null) {
+            content.setTypeContent(TypeContent.TEXT);
+        } else if (content.getMovieUrl() != null) {
+            content.setTypeContent(TypeContent.VIDEO);
         } else {
-            contentDto.setTypeContent(TypeContent.MIXED);
+            content.setTypeContent(TypeContent.NO_CONTENT);
+        }
+    }
+
+    private void isUrlValid(String url) {
+        if (url != null) {
+            try {
+                new URL(url).toURI();
+            } catch (Exception e) {
+                throw new InvalidUrlException(
+                        format("You url: %s isn't valid", url));
+            }
         }
     }
 

@@ -7,7 +7,6 @@ import com.sergax.courseapi.model.user.Role;
 import com.sergax.courseapi.model.user.User;
 import com.sergax.courseapi.security.JwtTokenProvider;
 import com.sergax.courseapi.service.UserService;
-import com.sergax.courseapi.service.iml.UserServiceIml;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

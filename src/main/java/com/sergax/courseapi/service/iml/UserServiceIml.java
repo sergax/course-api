@@ -19,7 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -64,7 +64,6 @@ public class UserServiceIml implements UserService {
     public UserDto save(UserDto userDto) {
         var user = userDto.toUser();
         userRepository.save(user);
-        log.info("IN save user: {}", new UserDto(user));
         return new UserDto(user);
     }
 

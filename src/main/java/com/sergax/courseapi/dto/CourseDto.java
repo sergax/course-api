@@ -1,17 +1,13 @@
 package com.sergax.courseapi.dto;
 
-import com.sergax.courseapi.model.Status;
 import com.sergax.courseapi.model.course.Course;
 import com.sergax.courseapi.model.course.CourseStatus;
 import com.sergax.courseapi.model.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +15,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
+@EqualsAndHashCode(callSuper=false)
 public class CourseDto extends BaseEntityDto {
     private String name;
     private String description;
@@ -26,6 +23,7 @@ public class CourseDto extends BaseEntityDto {
     private String movieUrl;
     private LocalDate dateStart;
     private LocalDate dateEnd;
+    @NotNull(message = "PUBLIC or PRIVATE")
     private CourseStatus status;
     private List<Long> mentorsId;
     private List<ContentDto> contents;
