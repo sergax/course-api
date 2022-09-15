@@ -1,7 +1,7 @@
 
-# This app allow you create a new course for students :)
+# This app allow you create a new course for students 🚀
  
-## Tehnologies:
+## Technologies:
  - SpringBoot
  - JWT
  - AWS (RDS)
