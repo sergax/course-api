@@ -7,7 +7,6 @@ import com.sergax.courseapi.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -26,7 +25,7 @@ public class CourseRestControllerV1 {
     }
 
     @GetMapping("/{courseId}")
-    public ResponseEntity<CourseDto> findUserById(@PathVariable Long courseId) {
+    public ResponseEntity<CourseDto> findCourseById(@PathVariable Long courseId) {
         return ResponseEntity.ok(courseService.findById(courseId));
     }
 
@@ -55,9 +54,9 @@ public class CourseRestControllerV1 {
     }
 
     @PutMapping("/contents/{contentId}")
-    public ResponseEntity<ContentDto> updateCourse(@PathVariable Long contentId,
-                                                   @RequestBody ContentDto contentDto,
-                                                   Principal principal) {
+    public ResponseEntity<ContentDto> updateContent(@PathVariable Long contentId,
+                                                    @RequestBody ContentDto contentDto,
+                                                    Principal principal) {
         return ResponseEntity.ok(
                 contentService.updateContentByMentor(contentId, contentDto, principal.getName()));
     }

@@ -1,7 +1,6 @@
 package com.sergax.courseapi.service.iml;
 
 import com.sergax.courseapi.dto.ContentDto;
-import com.sergax.courseapi.dto.UserDto;
 import com.sergax.courseapi.model.course.Content;
 import com.sergax.courseapi.model.course.TypeContent;
 import com.sergax.courseapi.repository.ContentRepository;
@@ -42,7 +41,8 @@ public class ContentServiceIml implements ContentService {
     public ContentDto findById(Long contentId) {
         return contentRepository.findById(contentId)
                 .map(ContentDto::new)
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(() -> new EntityNotFoundException(
+                        format("Content by ID: %d not found", contentId)));
     }
 
     @Override
@@ -62,8 +62,8 @@ public class ContentServiceIml implements ContentService {
         isUrlValid(contentDto.getMovieUrl());
         var content = contentDto.toContent();
         var course = courseDto.toCourse();
-        setContentType(content);
         content.setCourse(course);
+        setContentType(content);
         var savedContent = contentRepository.save(content);
 
         log.info("IN addContentToCourse: {}", new ContentDto(savedContent));
@@ -85,9 +85,9 @@ public class ContentServiceIml implements ContentService {
     @Override
     @Transactional
     public ContentDto updateContentByMentor(Long contentId, ContentDto contentDto, String mentorEmail) {
-        var userId = userService.findUserByEmail(mentorEmail).getId();
+        var mentorId = userService.findUserByEmail(mentorEmail).getId();
         var courseId = contentRepository.getById(contentId).getCourse().getId();
-        courseService.existMentorInCourse(courseId, userId);
+        courseService.existMentorInCourse(courseId, mentorId);
         var updatedContent = update(contentId, contentDto);
 
         log.info("IN updateContentByMentor : {}", updatedContent);

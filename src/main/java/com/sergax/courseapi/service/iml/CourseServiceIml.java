@@ -1,7 +1,6 @@
 package com.sergax.courseapi.service.iml;
 
 import com.sergax.courseapi.dto.CourseDto;
-import com.sergax.courseapi.model.course.Course;
 import com.sergax.courseapi.model.course.CourseStatus;
 import com.sergax.courseapi.model.user.User;
 import com.sergax.courseapi.repository.CourseRepository;
