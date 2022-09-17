@@ -52,7 +52,7 @@ class CourseRestControllerV1Test {
 
     @Test
     void findUserById() {
-        courseRestControllerV1Test.findUserById(anyLong());
+        courseRestControllerV1Test.findCourseById(anyLong());
         verify(courseServiceMock).findById(anyLong());
     }
 

@@ -118,7 +118,7 @@ class CourseServiceImlTest {
         when(courseRepository.existsCourseByMentorId(anyLong(), anyLong())).thenReturn(false);
 
         assertThatThrownBy(() -> courseServiceIml.existMentorInCourse(
-                mentorTest.getId(), courseTest.getId()))
+                 courseTest.getId(), mentorTest.getId()))
                 .isInstanceOf(InvalidMentorException.class)
                 .hasMessage("User ID: %d not a mentor on this course ID: %d", mentorTest.getId(), courseTest.getId());
     }
