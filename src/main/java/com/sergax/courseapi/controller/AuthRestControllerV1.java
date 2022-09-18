@@ -22,13 +22,13 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/v1/auth")
 @RequiredArgsConstructor
+//@CrossOrigin("https://app-course-client.herokuapp.com/")
 public class AuthRestControllerV1 {
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/login")
-    @CrossOrigin
     public ResponseEntity<LoginResponseDto> login(@RequestBody @Validated LoginRequestDto requestDto) {
         String email = requestDto.getEmail();
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, requestDto.getPassword()));
