@@ -20,7 +20,7 @@ public class CorsConfiguration {
                         .addMapping("/**")
                         .allowedOrigins(origins)
                         .allowCredentials(true)
-                        .allowedMethods("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH");
+                        .allowedMethods("*");
             }
         };
 
