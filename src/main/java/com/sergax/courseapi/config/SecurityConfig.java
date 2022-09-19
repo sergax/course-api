@@ -34,8 +34,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     protected JwtConfigurer configureSafe(HttpSecurity http) throws Exception {
         return http
-                .csrf().and()
-                .cors().disable()
+                .cors().and()
+                .csrf().disable()
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeRequests()
                 .antMatchers(AUTH_ENDPOINT).permitAll()
