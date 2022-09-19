@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
 @EnableWebSecurity
@@ -34,8 +35,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     protected JwtConfigurer configureSafe(HttpSecurity http) throws Exception {
         return http
-                .csrf().disable()
+
                 .cors().and()
+//                .cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
+                .csrf().disable()
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeRequests()
                 .antMatchers(AUTH_ENDPOINT).permitAll()
