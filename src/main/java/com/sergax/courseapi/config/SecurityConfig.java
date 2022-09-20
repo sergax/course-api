@@ -17,7 +17,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtTokenProvider tokenProvider;
     private static final String ADMIN_ENDPOINT = "/api/v1/admin/**";
-    private static final String USER_ENDPOINT = "/api/v1/profile/**";
+    private static final String USER_ENDPOINT = "/api/v1/courses/**";
     private static final String AUTH_ENDPOINT = "/api/v1/auth/**";
 
     @Bean
@@ -35,11 +35,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected JwtConfigurer configureSafe(HttpSecurity http) throws Exception {
         return http
                 .cors().and()
+                .httpBasic().disable()
                 .csrf().disable()
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeRequests()
                 .antMatchers(AUTH_ENDPOINT).permitAll()
-                .antMatchers(USER_ENDPOINT).hasAnyRole("USER", "ADMIN")
+                .antMatchers(USER_ENDPOINT).permitAll()
                 .antMatchers(ADMIN_ENDPOINT).hasAnyRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()

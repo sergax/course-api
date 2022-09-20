@@ -7,6 +7,7 @@ import com.sergax.courseapi.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -20,16 +21,19 @@ public class CourseRestControllerV1 {
     private final ContentService contentService;
 
     @GetMapping("/all")
+    @Secured(value = "ROLE_USER, ROLE_ADMIN")
     public ResponseEntity<List<CourseDto>> findAllCourses() {
         return ResponseEntity.ok(courseService.findAll());
     }
 
     @GetMapping("/{courseId}")
+    @Secured(value = "ROLE_USER, ROLE_ADMIN")
     public ResponseEntity<CourseDto> findCourseById(@PathVariable Long courseId) {
         return ResponseEntity.ok(courseService.findById(courseId));
     }
 
     @PostMapping
+    @Secured(value = "ROLE_USER, ROLE_ADMIN")
     public ResponseEntity<CourseDto> createCourseByMentor(@RequestBody CourseDto courseDto,
                                                           Principal principal) {
         return new ResponseEntity<>(
@@ -38,6 +42,7 @@ public class CourseRestControllerV1 {
     }
 
     @PostMapping("/{courseId}")
+    @Secured(value = "ROLE_USER, ROLE_ADMIN")
     public ResponseEntity<ContentDto> addContentToCourse(@PathVariable Long courseId,
                                                          @RequestBody ContentDto contentDto,
                                                          Principal principal) {
@@ -47,6 +52,7 @@ public class CourseRestControllerV1 {
     }
 
     @PutMapping("/{courseId}")
+    @Secured(value = "ROLE_USER, ROLE_ADMIN")
     public ResponseEntity<CourseDto> updateCourse(@PathVariable Long courseId,
                                                   @RequestBody CourseDto courseDto,
                                                   Principal principal) {
@@ -54,6 +60,7 @@ public class CourseRestControllerV1 {
     }
 
     @PutMapping("/contents/{contentId}")
+    @Secured(value = "ROLE_USER, ROLE_ADMIN")
     public ResponseEntity<ContentDto> updateContent(@PathVariable Long contentId,
                                                     @RequestBody ContentDto contentDto,
                                                     Principal principal) {
