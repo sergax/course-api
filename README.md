@@ -5,4 +5,4 @@
  - SpringBoot
  - JWT
  - AWS (RDS)
- - Deploy to Heroku
+ - Heroku
