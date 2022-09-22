@@ -35,14 +35,6 @@ public class UserServiceIml implements UserService {
     private final RoleService roleService;
     private final ConfirmationCodeRepository confirmationCodeRepository;
     private final PasswordEncoder passwordEncoder;
-//    private final JwtTokenProvider jwtTokenProvider;
-
-    private static final Integer PASSWORD_LENGTH = 8;
-    private static final Integer NUMBER_SPECIAL_CHARS_IN_PASSWORD = 2;
-    private static final String AVAILABLE_CHARS_FOR_PASSWORD = "abcdefghijklmnopqrstuvwxyzABCDEFGJKLMNPRSTUVWXYZ0123456789";
-    private static final String REQUIRED_SYMBOLS_FOR_PASSWORD = "^$?!@#%&";
-//    @Value("${cors.allowed.origins}")
-//    private String baseUrl;
 
     @Override
     public List<UserDto> findAll() {
