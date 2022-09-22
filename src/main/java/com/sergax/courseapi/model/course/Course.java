@@ -1,6 +1,5 @@
 package com.sergax.courseapi.model.course;
 
-import com.sergax.courseapi.model.Status;
 import com.sergax.courseapi.model.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;

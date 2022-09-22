@@ -6,6 +6,7 @@ import com.sergax.courseapi.model.user.ConfirmationCode;
 import com.sergax.courseapi.model.Status;
 import com.sergax.courseapi.repository.ConfirmationCodeRepository;
 import com.sergax.courseapi.repository.UserRepository;
+import com.sergax.courseapi.service.MailService;
 import com.sergax.courseapi.service.RoleService;
 import com.sergax.courseapi.service.exception.AlreadyConfirmedException;
 import com.sergax.courseapi.service.exception.CodeNotFoundException;
@@ -35,6 +36,7 @@ public class UserServiceIml implements UserService {
     private final RoleService roleService;
     private final ConfirmationCodeRepository confirmationCodeRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MailService mailService;
 
     @Override
     public List<UserDto> findAll() {
@@ -134,6 +136,9 @@ public class UserServiceIml implements UserService {
                 Status.ACTIVE);
         confirmationCodeRepository.save(confirmationCode);
 
+        var message = "Hello, welcome to Course-client. Your email confirmation code: " + confirmationCode.getCode();
+        mailService.send(userDto.getEmail(), "Email confirmation code", message);
+
         log.info("IN register user: {} registered", registeredUser);
         return registeredUser;
     }
@@ -174,8 +179,9 @@ public class UserServiceIml implements UserService {
 
             confirmationCodeRepository.flush();
 
-//            String message = "Hello, your previous confirmation code has been expired. There is your new email confirmation code: " + newConfirmationCode.getCode();
-//            mailService.send(user.getEmail(), "Email confirmation code", message);
+            var message = "Hello, your previous confirmation code has been expired. " +
+                    "There is your new email confirmation code: " + newConfirmationCode.getCode();
+            mailService.send(user.getEmail(), "Email confirmation code", message);
 
         }
 
