@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class UserDto extends BaseEntityDto {
     private String firstName;
     private String lastName;
-    @JsonIgnore
+
     private String password;
     private String email;
     private LocalDate created;

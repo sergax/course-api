@@ -15,7 +15,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 @Service
-@Generated
 @RequiredArgsConstructor
 public class MailServiceImpl implements MailService {
     private final Session mailSession;
