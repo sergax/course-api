@@ -41,7 +41,7 @@ public class CourseRestControllerV1 {
                 HttpStatus.CREATED);
     }
 
-    @PostMapping("/{courseId}")
+    @PostMapping("/{courseId}/contents")
     @Secured(value = "ROLE_USER, ROLE_ADMIN")
     public ResponseEntity<ContentDto> addContentToCourse(@PathVariable Long courseId,
                                                          @RequestBody ContentDto contentDto,
