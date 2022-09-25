@@ -1,9 +1,13 @@
 package com.sergax.courseapi.controller;
 
 import com.sergax.courseapi.dto.ContentDto;
+import com.sergax.courseapi.dto.ContentInformationDto;
 import com.sergax.courseapi.dto.CourseDto;
+import com.sergax.courseapi.dto.CourseInformationDto;
 import com.sergax.courseapi.model.user.User;
+import com.sergax.courseapi.service.ContentInformationService;
 import com.sergax.courseapi.service.ContentService;
+import com.sergax.courseapi.service.CourseInformationService;
 import com.sergax.courseapi.service.CourseService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +29,11 @@ class CourseRestControllerV1Test {
     @Mock
     private CourseService courseServiceMock;
     @Mock
-    private ContentService contentService;
+    private ContentService contentServiceMock;
+    @Mock
+    private ContentInformationService contentInformationServiceMock;
+    @Mock
+    private CourseInformationService courseInformationServiceMock;
     @InjectMocks
     private CourseRestControllerV1 courseRestControllerV1Test;
     private final Principal principal = mock(Principal.class);
@@ -65,12 +73,27 @@ class CourseRestControllerV1Test {
     @Test
     void addContentToCourse() {
         courseRestControllerV1Test.addContentToCourse(1L, contentDtoTest, principal);
-        verify(contentService).addContentToCourse(1L, contentDtoTest, mentorTest.getEmail());
+        verify(contentServiceMock).addContentToCourse(1L, contentDtoTest, mentorTest.getEmail());
     }
 
     @Test
-    void updateUser() {
-        courseRestControllerV1Test.updateCourse(1L, courseDtoTest, principal);
-        verify(courseServiceMock).updateCourseByMentor(1L, courseDtoTest, mentorTest.getEmail());
+    void addStudentToCourse() {
+        var courseInformationDto = new CourseInformationDto();
+        courseRestControllerV1Test.addStudentToCourse(1L, courseInformationDto, principal);
+        verify(courseInformationServiceMock).addStudentToCourse(1L, courseInformationDto, mentorTest.getEmail());
+    }
+
+    @Test
+    void addLikesAndCommentsToCourseByStudent() {
+        var courseInformationDto = new CourseInformationDto();
+        courseRestControllerV1Test.addLikesAndCommentsToCourseByStudent(1L, courseInformationDto, principal);
+        verify(courseInformationServiceMock).addLikesAndCommentsToCourseByStudent(1L, courseInformationDto, mentorTest.getEmail());
+    }
+
+    @Test
+    void passedContentByStudent() {
+        var contentInformationDto = new ContentInformationDto();
+        courseRestControllerV1Test.passedContentByStudent(1L, contentInformationDto, principal);
+        verify(contentInformationServiceMock).passedContentByStudent(1L, contentInformationDto, mentorTest.getEmail());
     }
 }

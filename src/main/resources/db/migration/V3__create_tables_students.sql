@@ -8,7 +8,9 @@ create table if not exists courses_students
     likes           boolean default 0,
 
     foreign key (course_id) references courses (id) on delete cascade,
-    foreign key (student_id) references users (id) on delete cascade
+    foreign key (student_id) references users (id) on delete cascade,
+
+    constraint courses_students UNIQUE (course_id, student_id)
 );
 
 create table if not exists contents_students
@@ -19,5 +21,7 @@ create table if not exists contents_students
     passed     boolean not null default 0,
 
     foreign key (content_id) references courses_contents (id) on delete cascade,
-    foreign key (student_id) references users (id) on delete cascade
+    foreign key (student_id) references users (id) on delete cascade,
+
+    constraint contents_students UNIQUE (content_id, student_id)
 );

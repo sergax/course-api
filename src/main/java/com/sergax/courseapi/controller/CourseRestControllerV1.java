@@ -1,9 +1,11 @@
 package com.sergax.courseapi.controller;
 
 import com.sergax.courseapi.dto.ContentDto;
+import com.sergax.courseapi.dto.ContentInformationDto;
 import com.sergax.courseapi.dto.CourseDto;
 import com.sergax.courseapi.dto.CourseInformationDto;
 import com.sergax.courseapi.model.course.ContentInformation;
+import com.sergax.courseapi.service.ContentInformationService;
 import com.sergax.courseapi.service.ContentService;
 import com.sergax.courseapi.service.CourseInformationService;
 import com.sergax.courseapi.service.CourseService;
@@ -23,6 +25,7 @@ public class CourseRestControllerV1 {
     private final CourseService courseService;
     private final ContentService contentService;
     private final CourseInformationService courseInformationService;
+    private final ContentInformationService contentInformationService;
 
     @GetMapping("/all")
     @Secured(value = "ROLE_USER, ROLE_ADMIN")
@@ -94,6 +97,15 @@ public class CourseRestControllerV1 {
                                                                                      Principal principal) {
         return ResponseEntity.ok(
                 courseInformationService.addLikesAndCommentsToCourseByStudent(courseId, courseInformationDto, principal.getName()));
+    }
+
+    @PostMapping("/contents/{contentId}")
+    @Secured(value = "ROLE_USER, ROLE_ADMIN")
+    public ResponseEntity<ContentInformationDto> passedContentByStudent(@PathVariable Long contentId,
+                                                                       @RequestBody ContentInformationDto contentInformationDto,
+                                                                       Principal principal) {
+        return ResponseEntity.ok(
+                contentInformationService.passedContentByStudent(contentId, contentInformationDto, principal.getName()));
     }
 
 }

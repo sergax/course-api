@@ -9,18 +9,21 @@ import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 public class ContentDto extends BaseEntityDto {
     @NotNull
     private String name;
     private String text;
     private String movieUrl;
     private TypeContent typeContent;
+    private List<ContentInformationDto> contentsInformation;
 
     public ContentDto(Content content) {
         this.id = content.getId();
@@ -28,6 +31,9 @@ public class ContentDto extends BaseEntityDto {
         this.text = content.getText();
         this.movieUrl = content.getMovieUrl();
         this.typeContent = content.getTypeContent();
+        this.contentsInformation = content.getContentsInformation().stream()
+                .map(ContentInformationDto::new)
+                .collect(Collectors.toList());
     }
 
     public Content toContent() {

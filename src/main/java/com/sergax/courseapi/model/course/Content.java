@@ -33,6 +33,6 @@ public class Content {
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @ManyToMany(mappedBy = "contents", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "content", fetch = FetchType.LAZY)
     private List<ContentInformation> contentsInformation;
 }

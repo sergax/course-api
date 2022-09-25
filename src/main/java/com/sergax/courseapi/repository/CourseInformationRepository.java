@@ -10,9 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface CourseInformationRepository extends JpaRepository<CourseInformation, Long> {
-//    @Query(value = "select * " +
-//            "from courses_students " +
-//            "where course_id = ?1 and student_id = ?2", nativeQuery = true)
     Optional<CourseInformation> findCourseInformationByCourseIdAndStudentId(Long courseId, Long studentId);
 }
 

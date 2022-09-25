@@ -12,5 +12,11 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             " where course_id = ?1 and mentor_id = ?2), 'true', 'false')",
             nativeQuery = true)
     boolean existsCourseByMentorId(Long courseId, Long mentorId);
+
+    @Query(value = "select if (exists(select course_id , student_id " +
+            " from courses_students " +
+            " where course_id = ?1 and student_id = ?2), 'true', 'false')",
+            nativeQuery = true)
+    boolean existsCourseByStudentId(Long courseId, Long studentId);
 }
 

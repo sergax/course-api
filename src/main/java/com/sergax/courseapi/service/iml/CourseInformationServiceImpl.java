@@ -6,6 +6,7 @@ import com.sergax.courseapi.repository.CourseInformationRepository;
 import com.sergax.courseapi.repository.CourseRepository;
 import com.sergax.courseapi.repository.UserRepository;
 import com.sergax.courseapi.service.CourseInformationService;
+import com.sergax.courseapi.service.exception.NotUniqueDataException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,23 +32,26 @@ public class CourseInformationServiceImpl implements CourseInformationService {
             Long courseId,
             CourseInformationDto courseInformationDto,
             String studentEmail) {
-        var student = userRepository.findByEmail(studentEmail)
+        var user = userRepository.findByEmail(studentEmail)
                 .orElseThrow(EntityNotFoundException::new);
-        var courseInfo = new ArrayList<CourseInformation>();
         var course = courseRepository.getById(courseId);
-        if (!courseRepository.existsCourseByMentorId(courseId, student.getId())) {
-            courseInformationDto
-                    .setCourseId(courseId)
-                    .setStudentId(student.getId())
-                    .setDateRegistered(LocalDate.now());
-
+        if (courseRepository.existsCourseByMentorId(courseId, user.getId())) {
+            throw new NotUniqueDataException(
+                    format("Mentor by ID: %d is creator of course ID: %d", user.getId(), courseId));
         }
-        var courseInformation = courseInformationDto.toCourseInformation();
-        courseInformation.setCourse(course).setStudent(student);
+        if (courseRepository.existsCourseByStudentId(courseId, user.getId())) {
+            throw new NotUniqueDataException(
+                    format("Student by ID: %d already in course ID: %d", user.getId(), courseId));
+        }
+        var courseInformation = courseInformationDto.toCourseInformation()
+                .setCourse(course)
+                .setStudent(user)
+                .setDateRegistered(LocalDate.now());
         var savedCourseInformation = courseInformationRepository.save(courseInformation);
 
         log.info("IN addStudentToCourse: {}", new CourseInformationDto(savedCourseInformation));
         return new CourseInformationDto(savedCourseInformation);
+
     }
 
     @Override
