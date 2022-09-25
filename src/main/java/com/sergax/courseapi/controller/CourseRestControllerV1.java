@@ -1,14 +1,8 @@
 package com.sergax.courseapi.controller;
 
-import com.sergax.courseapi.dto.ContentDto;
-import com.sergax.courseapi.dto.ContentInformationDto;
-import com.sergax.courseapi.dto.CourseDto;
-import com.sergax.courseapi.dto.CourseInformationDto;
+import com.sergax.courseapi.dto.*;
 import com.sergax.courseapi.model.course.ContentInformation;
-import com.sergax.courseapi.service.ContentInformationService;
-import com.sergax.courseapi.service.ContentService;
-import com.sergax.courseapi.service.CourseInformationService;
-import com.sergax.courseapi.service.CourseService;
+import com.sergax.courseapi.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,12 +20,27 @@ public class CourseRestControllerV1 {
     private final ContentService contentService;
     private final CourseInformationService courseInformationService;
     private final ContentInformationService contentInformationService;
+    private final UserService userService;
 
     @GetMapping("/all")
     @Secured(value = "ROLE_USER, ROLE_ADMIN")
     public ResponseEntity<List<CourseDto>> findAllCourses() {
         return ResponseEntity.ok(courseService.findAll());
     }
+
+    @GetMapping("/{courseId}/likes")
+    @Secured(value = "ROLE_USER, ROLE_ADMIN")
+    public ResponseEntity<Integer> findAmountOfLikesByCourseId(@PathVariable Long courseId) {
+        return ResponseEntity.ok(courseInformationService.findAmountOfLikesByCourseId(courseId));
+    }
+
+    @GetMapping("/{courseId}/progress")
+    @Secured(value = "ROLE_USER, ROLE_ADMIN")
+    public ResponseEntity<Integer> findProgressByCourseIdAndStudentId(@PathVariable Long courseId, Principal principal) {
+        var userId = userService.findUserByEmail(principal.getName()).getId();
+        return ResponseEntity.ok(contentInformationService.findProgressByCourseIdAndStudentId(courseId, userId));
+    }
+
 
     @GetMapping("/{courseId}")
     @Secured(value = "ROLE_USER, ROLE_ADMIN")
@@ -102,8 +111,8 @@ public class CourseRestControllerV1 {
     @PostMapping("/contents/{contentId}")
     @Secured(value = "ROLE_USER, ROLE_ADMIN")
     public ResponseEntity<ContentInformationDto> passedContentByStudent(@PathVariable Long contentId,
-                                                                       @RequestBody ContentInformationDto contentInformationDto,
-                                                                       Principal principal) {
+                                                                        @RequestBody ContentInformationDto contentInformationDto,
+                                                                        Principal principal) {
         return ResponseEntity.ok(
                 contentInformationService.passedContentByStudent(contentId, contentInformationDto, principal.getName()));
     }

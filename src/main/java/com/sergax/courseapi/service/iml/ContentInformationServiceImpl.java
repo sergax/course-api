@@ -1,6 +1,7 @@
 package com.sergax.courseapi.service.iml;
 
 import com.sergax.courseapi.dto.ContentInformationDto;
+import com.sergax.courseapi.dto.StudentProgressDto;
 import com.sergax.courseapi.repository.ContentInformationRepository;
 import com.sergax.courseapi.repository.ContentRepository;
 import com.sergax.courseapi.repository.CourseRepository;
@@ -23,6 +24,11 @@ public class ContentInformationServiceImpl implements ContentInformationService 
     private final CourseRepository courseRepository;
     private final ContentRepository contentRepository;
     private final UserRepository userRepository;
+
+    @Override
+    public Integer findProgressByCourseIdAndStudentId(Long courseId, Long studentId) {
+        return contentInformationRepository.findProgressStudentByStudentIdAndCourseId(courseId, studentId);
+    }
 
     @Override
     public ContentInformationDto passedContentByStudent(Long contentId, ContentInformationDto contentInformationDto, String studentEmail) {

@@ -27,6 +27,11 @@ public class CourseInformationServiceImpl implements CourseInformationService {
     private final UserRepository userRepository;
 
     @Override
+    public Integer findAmountOfLikesByCourseId(Long courseId) {
+        return courseInformationRepository.findAmountOfLikesByCourseId(courseId);
+    }
+
+    @Override
     @Transactional
     public CourseInformationDto addStudentToCourse(
             Long courseId,
