@@ -1,6 +1,7 @@
 package com.sergax.courseapi.dto;
 
 import com.sergax.courseapi.model.course.Course;
+import com.sergax.courseapi.model.course.CourseInformation;
 import com.sergax.courseapi.model.course.CourseStatus;
 import com.sergax.courseapi.model.user.User;
 import lombok.*;
@@ -27,6 +28,7 @@ public class CourseDto extends BaseEntityDto {
     private CourseStatus status;
     private List<Long> mentorsId;
     private List<ContentDto> contents;
+    private List<CourseInformationDto> coursesInformation;
 
     public CourseDto(Course course) {
         this.id = course.getId();
@@ -49,6 +51,13 @@ public class CourseDto extends BaseEntityDto {
         } else {
             this.contents = course.getContents().stream()
                     .map(ContentDto::new)
+                    .collect(Collectors.toList());
+        }
+        if (course.getCoursesInformation() == null) {
+            this.coursesInformation = null;
+        } else {
+            this.coursesInformation = course.getCoursesInformation().stream()
+                    .map(CourseInformationDto::new)
                     .collect(Collectors.toList());
         }
     }

@@ -2,7 +2,10 @@ package com.sergax.courseapi.controller;
 
 import com.sergax.courseapi.dto.ContentDto;
 import com.sergax.courseapi.dto.CourseDto;
+import com.sergax.courseapi.dto.CourseInformationDto;
+import com.sergax.courseapi.model.course.ContentInformation;
 import com.sergax.courseapi.service.ContentService;
+import com.sergax.courseapi.service.CourseInformationService;
 import com.sergax.courseapi.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +22,7 @@ import java.util.List;
 public class CourseRestControllerV1 {
     private final CourseService courseService;
     private final ContentService contentService;
+    private final CourseInformationService courseInformationService;
 
     @GetMapping("/all")
     @Secured(value = "ROLE_USER, ROLE_ADMIN")
@@ -30,6 +34,12 @@ public class CourseRestControllerV1 {
     @Secured(value = "ROLE_USER, ROLE_ADMIN")
     public ResponseEntity<CourseDto> findCourseById(@PathVariable Long courseId) {
         return ResponseEntity.ok(courseService.findById(courseId));
+    }
+
+    @GetMapping("/contents/{contentId}")
+    @Secured(value = "ROLE_USER, ROLE_ADMIN")
+    public ResponseEntity<ContentDto> findContentById(@PathVariable Long contentId) {
+        return ResponseEntity.ok(contentService.findById(contentId));
     }
 
     @PostMapping
@@ -66,6 +76,24 @@ public class CourseRestControllerV1 {
                                                     Principal principal) {
         return ResponseEntity.ok(
                 contentService.updateContentByMentor(contentId, contentDto, principal.getName()));
+    }
+
+    @PatchMapping("/{courseId}/students")
+    @Secured(value = "ROLE_USER, ROLE_ADMIN")
+    public ResponseEntity<CourseInformationDto> addStudentToCourse(@PathVariable Long courseId,
+                                                                   @RequestBody CourseInformationDto courseInformationDto,
+                                                                   Principal principal) {
+        return ResponseEntity.ok(
+                courseInformationService.addStudentToCourse(courseId, courseInformationDto, principal.getName()));
+    }
+
+    @PatchMapping("/{courseId}/info")
+    @Secured(value = "ROLE_USER, ROLE_ADMIN")
+    public ResponseEntity<CourseInformationDto> addLikesAndCommentsToCourseByStudent(@PathVariable Long courseId,
+                                                                                     @RequestBody CourseInformationDto courseInformationDto,
+                                                                                     Principal principal) {
+        return ResponseEntity.ok(
+                courseInformationService.addLikesAndCommentsToCourseByStudent(courseId, courseInformationDto, principal.getName()));
     }
 
 }

@@ -2,6 +2,7 @@ package com.sergax.courseapi.model.user;
 
 import com.sergax.courseapi.model.Status;
 import com.sergax.courseapi.model.course.Course;
+import com.sergax.courseapi.model.course.CourseInformation;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -47,5 +48,7 @@ public class User {
     @ManyToMany(mappedBy = "mentors", fetch = FetchType.LAZY)
     private List<Course> courses;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "student")
+    private List<CourseInformation> coursesInformation;
 }
 

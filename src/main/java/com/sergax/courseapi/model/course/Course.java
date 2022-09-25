@@ -47,4 +47,7 @@ public class Course {
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY,
             cascade = CascadeType.ALL)
     private List<Content> contents;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "course")
+    private List<CourseInformation> coursesInformation;
 }
