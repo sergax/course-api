@@ -8,6 +8,7 @@ import com.sergax.courseapi.model.user.Role;
 import com.sergax.courseapi.model.user.User;
 import com.sergax.courseapi.repository.ConfirmationCodeRepository;
 import com.sergax.courseapi.repository.UserRepository;
+import com.sergax.courseapi.service.MailService;
 import com.sergax.courseapi.service.RoleService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +42,8 @@ class UserServiceImlTest {
     private ConfirmationCodeRepository confirmationCodeRepositoryMock;
     @Mock
     private PasswordEncoder passwordEncoderMock;
+    @Mock
+    private MailService mailServiceMock;
     @InjectMocks
     private UserServiceIml userServiceImlTest;
     private final User userTest = new User();

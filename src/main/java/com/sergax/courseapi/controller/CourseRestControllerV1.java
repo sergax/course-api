@@ -1,7 +1,6 @@
 package com.sergax.courseapi.controller;
 
 import com.sergax.courseapi.dto.*;
-import com.sergax.courseapi.model.course.ContentInformation;
 import com.sergax.courseapi.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

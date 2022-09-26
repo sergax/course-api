@@ -4,12 +4,14 @@ import com.sergax.courseapi.dto.ContentDto;
 import com.sergax.courseapi.dto.CourseDto;
 import com.sergax.courseapi.dto.UserDto;
 import com.sergax.courseapi.model.course.Content;
+import com.sergax.courseapi.model.course.ContentInformation;
 import com.sergax.courseapi.model.course.Course;
 import com.sergax.courseapi.model.course.TypeContent;
 import com.sergax.courseapi.model.user.Role;
 import com.sergax.courseapi.model.user.User;
 import com.sergax.courseapi.repository.ContentRepository;
 import com.sergax.courseapi.repository.CourseRepository;
+import com.sergax.courseapi.service.ContentInformationService;
 import com.sergax.courseapi.service.CourseService;
 import com.sergax.courseapi.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,10 +21,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -42,9 +46,18 @@ class ContentServiceImlTest {
     private final Content contentTest = new Content();
     private final Course courseTest = new Course();
     private final User mentorTest = new User();
+    private final ContentInformation contentInformationTest = new ContentInformation();
 
     @BeforeEach
     void setUp() {
+        contentInformationTest
+                .setId(55L)
+                .setContent(contentTest)
+                .setStudent(new User());
+
+        var contentsInformation = new ArrayList<ContentInformation>();
+        contentsInformation.add(contentInformationTest);
+
         courseTest
                 .setId(2L);
 
@@ -58,7 +71,8 @@ class ContentServiceImlTest {
                 .setName("name")
                 .setTypeContent(TypeContent.MIXED)
                 .setMovieUrl("https://music.youtube.com/playlist?list=RDCLAK5uy_mPolD_J22gS1SKxufARWcTZd1UrAH_0ZI")
-                .setCourse(courseTest);
+                .setCourse(courseTest)
+                .setContentsInformation(contentsInformation);
     }
 
     @Test
@@ -69,20 +83,17 @@ class ContentServiceImlTest {
 
     @Test
     void canFindContentById() {
-        when(contentRepositoryMock.findById(anyLong())).thenReturn(Optional.of(new Content()));
+        when(contentRepositoryMock.findById(anyLong())).thenReturn(Optional.of(contentTest));
         contentServiceImlMock.findById(anyLong());
         verify(contentRepositoryMock).findById(anyLong());
     }
 
     @Test
     void canSaveContent() {
-        var content = new Content();
-        content.setTypeContent(TypeContent.NO_CONTENT);
-        var expectedContentDto = new ContentDto(content);
-        when(contentRepositoryMock.save(content)).thenReturn(content);
+        when(contentRepositoryMock.save(contentTest)).thenReturn(contentTest);
 
-        var actualContent = contentServiceImlMock.save(expectedContentDto);
-        assertEquals(expectedContentDto, actualContent);
+        var actualContent = contentRepositoryMock.save(contentTest);
+        assertEquals(contentTest, actualContent);
     }
 
     @Test

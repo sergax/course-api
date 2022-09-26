@@ -1,14 +1,8 @@
 package com.sergax.courseapi.controller;
 
-import com.sergax.courseapi.dto.ContentDto;
-import com.sergax.courseapi.dto.ContentInformationDto;
-import com.sergax.courseapi.dto.CourseDto;
-import com.sergax.courseapi.dto.CourseInformationDto;
+import com.sergax.courseapi.dto.*;
 import com.sergax.courseapi.model.user.User;
-import com.sergax.courseapi.service.ContentInformationService;
-import com.sergax.courseapi.service.ContentService;
-import com.sergax.courseapi.service.CourseInformationService;
-import com.sergax.courseapi.service.CourseService;
+import com.sergax.courseapi.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,8 +15,7 @@ import java.security.Principal;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CourseRestControllerV1Test {
@@ -34,6 +27,8 @@ class CourseRestControllerV1Test {
     private ContentInformationService contentInformationServiceMock;
     @Mock
     private CourseInformationService courseInformationServiceMock;
+    @Mock
+    private UserService userServiceMock;
     @InjectMocks
     private CourseRestControllerV1 courseRestControllerV1Test;
     private final Principal principal = mock(Principal.class);
@@ -43,7 +38,9 @@ class CourseRestControllerV1Test {
 
     @BeforeEach
     void setUp() {
-        mentorTest.setEmail("mentorTest@mail.com");
+        mentorTest
+                .setId(5L)
+                .setEmail("mentorTest@mail.com");
         Mockito.when(principal.getName()).thenReturn(mentorTest.getEmail());
     }
 
@@ -52,6 +49,11 @@ class CourseRestControllerV1Test {
         assertThat(courseRestControllerV1Test).isNotNull();
     }
 
+    @Test
+    void findAmountOfLikesByCourseId() {
+        courseRestControllerV1Test.findAmountOfLikesByCourseId(1L);
+        verify(courseInformationServiceMock).findAmountOfLikesByCourseId(1L);
+    }
     @Test
     void findAllCourses() {
         courseRestControllerV1Test.findAllCourses();

@@ -41,7 +41,7 @@ public class ContentInformationServiceImpl implements ContentInformationService 
         var contentInformation = contentInformationDto.toContentInformation()
                 .setStudent(user)
                 .setContent(content)
-                .setPassed(contentInformationDto.isPassed());
+                .setPassed(Boolean.TRUE);
         var savedContentInformation = contentInformationRepository.save(contentInformation);
 
         log.info("IN passedContentByStudent: {}", new ContentInformationDto(savedContentInformation));
