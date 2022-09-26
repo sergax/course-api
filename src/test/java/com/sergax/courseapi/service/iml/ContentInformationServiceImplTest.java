@@ -1,6 +1,9 @@
 package com.sergax.courseapi.service.iml;
 
+import com.sergax.courseapi.dto.ContentInformationDto;
 import com.sergax.courseapi.model.course.Content;
+import com.sergax.courseapi.model.course.ContentInformation;
+import com.sergax.courseapi.model.course.Course;
 import com.sergax.courseapi.model.user.User;
 import com.sergax.courseapi.repository.ContentInformationRepository;
 import com.sergax.courseapi.repository.ContentRepository;
@@ -15,41 +18,67 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ContentInformationServiceImplTest {
     @Mock
-    private ContentInformationRepository contentInformationRepository;
+    private ContentInformationRepository contentInformationRepositoryMock;
     @Mock
-    private CourseRepository courseRepository;
+    private CourseRepository courseRepositoryMock;
     @Mock
-    private ContentRepository contentRepository;
+    private ContentRepository contentRepositoryMock;
     @Mock
-    private UserRepository userRepository;
+    private UserRepository userRepositoryMock;
     @InjectMocks
-    private ContentInformationServiceImplTest contentInformationServiceImplTest;
+    private ContentInformationServiceImpl contentInformationServiceTest;
+    private final ContentInformation contentInformationTest = new ContentInformation();
+    private final User studentTest = new User();
+    private final Content contentTest = new Content();
+    private final Course courseTest = new Course();
 
     @BeforeEach
     void setUp() {
+        courseTest
+                .setId(555L);
+
+        contentTest
+                .setId(4L)
+                .setCourse(courseTest);
+
+        studentTest
+                .setId(21L)
+                .setEmail("student@mail.com");
+
+        contentInformationTest
+                .setId(47L)
+                .setPassed(true)
+                .setContent(contentTest)
+                .setStudent(studentTest);
     }
 
     @Test
-    void findProgressByCourseIdAndStudentId() {
-        when(contentInformationRepository.findProgressStudentByStudentIdAndCourseId(anyLong(), anyLong())).thenReturn(20);
-        contentInformationServiceImplTest.findProgressByCourseIdAndStudentId();
-        verify(contentInformationRepository).findProgressStudentByStudentIdAndCourseId(anyLong(), anyLong());
+    void canFindProgressByCourseIdAndStudentId() {
+        when(contentInformationRepositoryMock.findProgressStudentByStudentIdAndCourseId(anyLong(), anyLong())).thenReturn(50);
+        contentInformationServiceTest.findProgressByCourseIdAndStudentId(anyLong(), anyLong());
+        verify(contentInformationRepositoryMock).findProgressStudentByStudentIdAndCourseId(anyLong(), anyLong());
     }
 
     @Test
-    void passedContentByStudent() {
-        when(contentRepository.getById(anyLong())).thenReturn(new Content());
-        when(userRepository.findByEmail(any())).thenReturn(Optional.of(new User()));
-        when(courseRepository.existsCourseByStudentId(anyLong(), anyLong())).thenReturn(false);
+    void canPasseContentByStudent() {
+        var expectedContentInformationDto = new ContentInformationDto(contentInformationTest);
+        when(contentRepositoryMock.getById(contentTest.getId())).thenReturn(contentTest);
+        when(userRepositoryMock.findByEmail(studentTest.getEmail())).thenReturn(Optional.of(studentTest));
+        when(courseRepositoryMock.existsCourseByMentorId(courseTest.getId(), studentTest.getId())).thenReturn(false);
+        when(contentInformationRepositoryMock.save(contentInformationTest)).thenReturn(contentInformationTest);
 
-        contentInformationServiceImplTest.passedContentByStudent();
+        var actualContentInformationDto =
+                contentInformationServiceTest.passedContentByStudent(contentTest.getId(), expectedContentInformationDto, studentTest.getEmail());
+        assertEquals(expectedContentInformationDto, actualContentInformationDto);
     }
+
 }
+
