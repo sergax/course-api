@@ -1,6 +1,7 @@
 package com.sergax.courseapi.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sergax.courseapi.model.course.Course;
 import com.sergax.courseapi.model.user.User;
 import com.sergax.courseapi.model.Status;
 import lombok.AllArgsConstructor;
@@ -31,6 +32,7 @@ public class UserDto extends BaseEntityDto {
     private LocalDate updated;
     private Status status;
     private List<RoleDto> roles;
+    private List<Long> coursesId;
 
     public UserDto(User user) {
         this.id = user.getId();
@@ -43,6 +45,9 @@ public class UserDto extends BaseEntityDto {
         this.status = user.getStatus();
         this.roles = user.getRoles().stream()
                 .map(RoleDto::new)
+                .collect(Collectors.toList());
+        this.coursesId = user.getCourses().stream()
+                .map(Course::getId)
                 .collect(Collectors.toList());
     }
 

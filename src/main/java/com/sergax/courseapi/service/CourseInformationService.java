@@ -5,7 +5,6 @@ import com.sergax.courseapi.dto.CourseInformationDto;
 
 public interface CourseInformationService {
     Integer findAmountOfLikesByCourseId(Long courseId);
-
-    CourseInformationDto addStudentToCourse(Long courseId, CourseInformationDto courseInformationDto, String studentEmail);
-    CourseInformationDto addLikesAndCommentsToCourseByStudent(Long courseId, CourseInformationDto courseInformationDto, String studentEmail);
+    CourseInformationDto addStudentToCourse(Long courseId, String studentEmail);
+    CourseInformationDto addLikesToCourseByStudent(Long courseId, String studentEmail);
 }

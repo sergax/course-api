@@ -11,7 +11,6 @@ import com.sergax.courseapi.model.user.Role;
 import com.sergax.courseapi.model.user.User;
 import com.sergax.courseapi.repository.ContentRepository;
 import com.sergax.courseapi.repository.CourseRepository;
-import com.sergax.courseapi.service.ContentInformationService;
 import com.sergax.courseapi.service.CourseService;
 import com.sergax.courseapi.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,20 +45,12 @@ class ContentServiceImlTest {
     private final Content contentTest = new Content();
     private final Course courseTest = new Course();
     private final User mentorTest = new User();
-    private final ContentInformation contentInformationTest = new ContentInformation();
 
     @BeforeEach
     void setUp() {
-        contentInformationTest
-                .setId(55L)
-                .setContent(contentTest)
-                .setStudent(new User());
-
-        var contentsInformation = new ArrayList<ContentInformation>();
-        contentsInformation.add(contentInformationTest);
-
         courseTest
-                .setId(2L);
+                .setId(2L)
+                .getContents().add(contentTest);
 
         mentorTest.setId(50L)
                 .setRoles(List.of(new Role()))
@@ -71,8 +62,7 @@ class ContentServiceImlTest {
                 .setName("name")
                 .setTypeContent(TypeContent.MIXED)
                 .setMovieUrl("https://music.youtube.com/playlist?list=RDCLAK5uy_mPolD_J22gS1SKxufARWcTZd1UrAH_0ZI")
-                .setCourse(courseTest)
-                .setContentsInformation(contentsInformation);
+                .setCourse(courseTest);
     }
 
     @Test
@@ -98,14 +88,15 @@ class ContentServiceImlTest {
 
     @Test
     void canAddContentToCourse() {
-        var expectedContentDto = new ContentDto(contentTest);
+        var expectedContentDto = new ContentDto();
+        var content = new Content().setTypeContent(TypeContent.NO_CONTENT);
         when(courseServiceMock.findById(courseTest.getId())).thenReturn(new CourseDto(courseTest));
         when(userServiceMock.findUserByEmail(mentorTest.getEmail())).thenReturn(new UserDto(mentorTest));
-        when(contentRepositoryMock.save(contentTest)).thenReturn(contentTest);
+        when(contentRepositoryMock.save(content)).thenReturn(content);
 
-        var actualContent =
+        var actualContentDto =
                 contentServiceImlMock.addContentToCourse(courseTest.getId(), expectedContentDto, mentorTest.getEmail());
-        assertEquals(expectedContentDto, actualContent);
+        assertEquals(2L, actualContentDto.getCourseId());
     }
 
     @Test

@@ -64,7 +64,7 @@ class CourseInformationServiceImplTest {
         when(courseInformationRepositoryMock.save(courseInformation)).thenReturn(courseInformation);
 
         var actualCourseInformationDto =
-                courseInformationServiceTest.addStudentToCourse(courseTest.getId(), expectedCourseInformationDto, studentTest.getEmail());
+                courseInformationServiceTest.addStudentToCourse(courseTest.getId(), studentTest.getEmail());
         assertEquals(expectedCourseInformationDto, actualCourseInformationDto);
     }
 
@@ -78,7 +78,7 @@ class CourseInformationServiceImplTest {
                 .thenReturn(Optional.of(courseInformation));
 
         var actualCourseInformationDto =
-                courseInformationServiceTest.addLikesAndCommentsToCourseByStudent(courseTest.getId(), courseInformationDto, studentTest.getEmail());
+                courseInformationServiceTest.addLikesToCourseByStudent(courseTest.getId(), studentTest.getEmail());
         assertEquals("comments", actualCourseInformationDto.getComments());
         assertTrue(actualCourseInformationDto.isLikes());
     }

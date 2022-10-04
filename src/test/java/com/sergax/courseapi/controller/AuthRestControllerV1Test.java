@@ -4,6 +4,7 @@ import com.sergax.courseapi.dto.*;
 import com.sergax.courseapi.model.Status;
 import com.sergax.courseapi.model.user.ConfirmationCode;
 import com.sergax.courseapi.security.JwtTokenProvider;
+import com.sergax.courseapi.service.CourseService;
 import com.sergax.courseapi.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,8 @@ class AuthRestControllerV1Test {
     private UserService userServiceMock;
     @Mock
     private JwtTokenProvider jwtTokenProviderMock;
+    @Mock
+    private CourseService courseService;
     @InjectMocks
     private AuthRestControllerV1 authRestControllerV1UnderTest;
     private final LoginRequestDto loginRequestDto = new LoginRequestDto();

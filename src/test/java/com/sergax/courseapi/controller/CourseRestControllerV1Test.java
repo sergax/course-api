@@ -80,22 +80,20 @@ class CourseRestControllerV1Test {
 
     @Test
     void addStudentToCourse() {
-        var courseInformationDto = new CourseInformationDto();
-        courseRestControllerV1Test.addStudentToCourse(1L, courseInformationDto, principal);
-        verify(courseInformationServiceMock).addStudentToCourse(1L, courseInformationDto, mentorTest.getEmail());
+        courseRestControllerV1Test.addStudentToCourse(1L, principal);
+        verify(courseInformationServiceMock).addStudentToCourse(1L, mentorTest.getEmail());
     }
 
     @Test
     void addLikesAndCommentsToCourseByStudent() {
         var courseInformationDto = new CourseInformationDto();
-        courseRestControllerV1Test.addLikesAndCommentsToCourseByStudent(1L, courseInformationDto, principal);
-        verify(courseInformationServiceMock).addLikesAndCommentsToCourseByStudent(1L, courseInformationDto, mentorTest.getEmail());
+        courseRestControllerV1Test.addLikesToCourseByStudent(1L, principal);
+        verify(courseInformationServiceMock).addLikesToCourseByStudent(1L, mentorTest.getEmail());
     }
 
     @Test
     void passedContentByStudent() {
-        var contentInformationDto = new ContentInformationDto();
-        courseRestControllerV1Test.passedContentByStudent(1L, contentInformationDto, principal);
-        verify(contentInformationServiceMock).passedContentByStudent(1L, contentInformationDto, mentorTest.getEmail());
+        courseRestControllerV1Test.passedContentByStudent(1L, principal);
+        verify(contentInformationServiceMock).passedContentByStudent(1L, mentorTest.getEmail());
     }
 }

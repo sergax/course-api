@@ -1,14 +1,11 @@
 package com.sergax.courseapi.model.course;
 
 import com.sergax.courseapi.model.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.util.List;
-
 @Data
 @Entity
 @Table(name = "contents_students")

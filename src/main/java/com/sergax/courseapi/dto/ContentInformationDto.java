@@ -14,8 +14,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
-public class ContentInformationDto implements Serializable {
-    private Long id;
+public class ContentInformationDto extends BaseEntityDto {
     private boolean passed;
     private Long contentId;
     private Long studentId;

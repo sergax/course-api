@@ -6,9 +6,11 @@ import com.sergax.courseapi.model.course.Course;
 import com.sergax.courseapi.model.course.CourseInformation;
 import lombok.*;
 import lombok.experimental.Accessors;
+import org.springframework.data.jpa.repository.EntityGraph;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -40,19 +42,17 @@ public class User {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "users_roles",
-            joinColumns = @JoinColumn(
-                    name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(
-                    name = "role_id", referencedColumnName = "id"))
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles;
 
     @ManyToMany(mappedBy = "mentors", fetch = FetchType.LAZY)
-    private List<Course> courses;
+    private List<Course> courses = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "student")
-    private List<CourseInformation> coursesInformation;
+    private List<CourseInformation> coursesInformation = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "student")
-    private List<ContentInformation> contentsInformation;
+    private List<ContentInformation> contentsInformation = new ArrayList<>();
 }
 

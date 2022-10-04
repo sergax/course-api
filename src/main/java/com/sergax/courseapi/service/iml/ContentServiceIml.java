@@ -62,9 +62,9 @@ public class ContentServiceIml implements ContentService {
         isUrlValid(contentDto.getMovieUrl());
         var content = contentDto.toContent();
         var course = courseDto.toCourse();
-        content.setCourse(course);
         setContentType(content);
         var savedContent = contentRepository.save(content);
+        savedContent.setCourse(course);
 
         log.info("IN addContentToCourse: {}", new ContentDto(savedContent));
         return new ContentDto(savedContent);

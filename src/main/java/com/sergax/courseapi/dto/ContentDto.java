@@ -23,6 +23,7 @@ public class ContentDto extends BaseEntityDto {
     private String text;
     private String movieUrl;
     private TypeContent typeContent;
+    private Long courseId;
     private List<ContentInformationDto> contentsInformation;
 
     public ContentDto(Content content) {
@@ -31,6 +32,7 @@ public class ContentDto extends BaseEntityDto {
         this.text = content.getText();
         this.movieUrl = content.getMovieUrl();
         this.typeContent = content.getTypeContent();
+        this.courseId = content.getCourse().getId();
         this.contentsInformation = content.getContentsInformation().stream()
                 .map(ContentInformationDto::new)
                 .collect(Collectors.toList());

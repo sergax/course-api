@@ -6,6 +6,7 @@ import com.sergax.courseapi.model.Status;
 import com.sergax.courseapi.model.user.Role;
 import com.sergax.courseapi.model.user.User;
 import com.sergax.courseapi.security.JwtTokenProvider;
+import com.sergax.courseapi.service.CourseService;
 import com.sergax.courseapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ public class AuthRestControllerV1 {
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final CourseService courseService;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody @Validated LoginRequestDto requestDto) {
@@ -64,6 +66,11 @@ public class AuthRestControllerV1 {
             return new ResponseEntity<>(HttpStatus.GONE);
         }
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/public/courses")
+    public ResponseEntity<List<CourseDto>> getAllPublicCourses() {
+        return ResponseEntity.ok(courseService.findAllPublicCourses());
     }
 
 }

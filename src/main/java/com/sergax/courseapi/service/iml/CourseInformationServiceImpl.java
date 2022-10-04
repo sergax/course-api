@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 
 import static java.lang.String.format;
 
@@ -35,7 +34,6 @@ public class CourseInformationServiceImpl implements CourseInformationService {
     @Transactional
     public CourseInformationDto addStudentToCourse(
             Long courseId,
-            CourseInformationDto courseInformationDto,
             String studentEmail) {
         var user = userRepository.findByEmail(studentEmail)
                 .orElseThrow(EntityNotFoundException::new);
@@ -48,7 +46,8 @@ public class CourseInformationServiceImpl implements CourseInformationService {
             throw new NotUniqueDataException(
                     format("Student by ID: %d already in course ID: %d", user.getId(), courseId));
         }
-        var courseInformation = courseInformationDto.toCourseInformation()
+
+        var courseInformation = new CourseInformationDto().toCourseInformation()
                 .setCourse(course)
                 .setStudent(user)
                 .setDateRegistered(LocalDate.now());
@@ -61,9 +60,8 @@ public class CourseInformationServiceImpl implements CourseInformationService {
 
     @Override
     @Transactional
-    public CourseInformationDto addLikesAndCommentsToCourseByStudent(
+    public CourseInformationDto addLikesToCourseByStudent(
             Long courseId,
-            CourseInformationDto courseInformationDto,
             String studentEmail) {
         var student = userRepository.findByEmail(studentEmail)
                 .orElseThrow(EntityNotFoundException::new);
@@ -74,8 +72,7 @@ public class CourseInformationServiceImpl implements CourseInformationService {
                                 new EntityNotFoundException(
                                         format("Student by ID: %d not in course ID: %d", student.getId(), courseId)));
         courseInformationDtoByCourseIdAndStudentId
-                .setComments(courseInformationDto.getComments())
-                .setLikes(courseInformationDto.isLikes());
+                .setLikes(Boolean.TRUE);
 
         log.info("IN addLikesAndCommentsToCourseByStudent: {}",
                 new CourseInformationDto(courseInformationDtoByCourseIdAndStudentId));

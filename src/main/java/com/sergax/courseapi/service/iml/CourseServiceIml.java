@@ -37,6 +37,11 @@ public class CourseServiceIml implements CourseService {
     }
 
     @Override
+    public List<CourseDto> findAllPublicCourses() {
+        return courseRepository.findAllByStatusPublic();
+    }
+
+    @Override
     @Transactional
     public CourseDto findById(Long courseId) {
         return courseRepository.findById(courseId)

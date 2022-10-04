@@ -2,6 +2,7 @@ package com.sergax.courseapi.service.iml;
 
 import com.sergax.courseapi.dto.ContentInformationDto;
 import com.sergax.courseapi.dto.StudentProgressDto;
+import com.sergax.courseapi.model.course.ContentInformation;
 import com.sergax.courseapi.repository.ContentInformationRepository;
 import com.sergax.courseapi.repository.ContentRepository;
 import com.sergax.courseapi.repository.CourseRepository;
@@ -31,14 +32,15 @@ public class ContentInformationServiceImpl implements ContentInformationService 
     }
 
     @Override
-    public ContentInformationDto passedContentByStudent(Long contentId, ContentInformationDto contentInformationDto, String studentEmail) {
+    public ContentInformationDto passedContentByStudent(Long contentId, String studentEmail) {
         var content = contentRepository.getById(contentId);
         var user = userRepository.findByEmail(studentEmail).orElseThrow(EntityNotFoundException::new);
         if (courseRepository.existsCourseByMentorId(content.getCourse().getId(), user.getId())) {
             throw new NotUniqueDataException(
                     format("Mentor by ID: %d is creator of course ID: %d", user.getId(), content.getCourse().getId()));
         }
-        var contentInformation = contentInformationDto.toContentInformation()
+        var contentInformation = new ContentInformation();
+        contentInformation
                 .setStudent(user)
                 .setContent(content)
                 .setPassed(Boolean.TRUE);

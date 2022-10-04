@@ -1,16 +1,16 @@
 package com.sergax.courseapi.model.course;
 
 import com.sergax.courseapi.model.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "courses")
 @AllArgsConstructor
@@ -42,12 +42,12 @@ public class Course {
             joinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "mentor_id", referencedColumnName = "id")
     )
-    private List<User> mentors;
+    private List<User> mentors = new ArrayList<>();
 
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY,
             cascade = CascadeType.ALL)
-    private List<Content> contents;
+    private List<Content> contents = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "course")
-    private List<CourseInformation> coursesInformation;
+    private List<CourseInformation> coursesInformation = new ArrayList<>();
 }

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -34,5 +35,5 @@ public class Content {
     private Course course;
 
     @OneToMany(mappedBy = "content", fetch = FetchType.LAZY)
-    private List<ContentInformation> contentsInformation;
+    private List<ContentInformation> contentsInformation = new ArrayList<>();
 }

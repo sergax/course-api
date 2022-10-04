@@ -92,28 +92,25 @@ public class CourseRestControllerV1 {
     @PatchMapping("/{courseId}/students")
     @Secured(value = "ROLE_USER, ROLE_ADMIN")
     public ResponseEntity<CourseInformationDto> addStudentToCourse(@PathVariable Long courseId,
-                                                                   @RequestBody CourseInformationDto courseInformationDto,
                                                                    Principal principal) {
         return ResponseEntity.ok(
-                courseInformationService.addStudentToCourse(courseId, courseInformationDto, principal.getName()));
+                courseInformationService.addStudentToCourse(courseId, principal.getName()));
     }
 
     @PatchMapping("/{courseId}/info")
     @Secured(value = "ROLE_USER, ROLE_ADMIN")
-    public ResponseEntity<CourseInformationDto> addLikesAndCommentsToCourseByStudent(@PathVariable Long courseId,
-                                                                                     @RequestBody CourseInformationDto courseInformationDto,
+    public ResponseEntity<CourseInformationDto> addLikesToCourseByStudent(@PathVariable Long courseId,
                                                                                      Principal principal) {
         return ResponseEntity.ok(
-                courseInformationService.addLikesAndCommentsToCourseByStudent(courseId, courseInformationDto, principal.getName()));
+                courseInformationService.addLikesToCourseByStudent(courseId, principal.getName()));
     }
 
     @PostMapping("/contents/{contentId}")
     @Secured(value = "ROLE_USER, ROLE_ADMIN")
     public ResponseEntity<ContentInformationDto> passedContentByStudent(@PathVariable Long contentId,
-                                                                        @RequestBody ContentInformationDto contentInformationDto,
                                                                         Principal principal) {
         return ResponseEntity.ok(
-                contentInformationService.passedContentByStudent(contentId, contentInformationDto, principal.getName()));
+                contentInformationService.passedContentByStudent(contentId, principal.getName()));
     }
 
 }
