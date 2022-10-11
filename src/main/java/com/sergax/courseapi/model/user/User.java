@@ -6,6 +6,8 @@ import com.sergax.courseapi.model.course.Course;
 import com.sergax.courseapi.model.course.CourseInformation;
 import lombok.*;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.data.jpa.repository.EntityGraph;
 
 import javax.persistence.*;
@@ -39,20 +41,20 @@ public class User {
     @Column(name = "user_status")
     private Status status;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles;
 
-    @ManyToMany(mappedBy = "mentors", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "mentors")
     private List<Course> courses = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "student")
+    @OneToMany(mappedBy = "student")
     private List<CourseInformation> coursesInformation = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "student")
+    @OneToMany(mappedBy = "student")
     private List<ContentInformation> contentsInformation = new ArrayList<>();
 }
 

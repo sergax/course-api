@@ -3,11 +3,13 @@ package com.sergax.courseapi.model.course;
 import com.sergax.courseapi.model.user.User;
 import lombok.*;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -36,18 +38,18 @@ public class Course {
     @Column(name = "status")
     private CourseStatus courseStatus;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(
             name = "courses_mentors",
             joinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "mentor_id", referencedColumnName = "id")
     )
-    private List<User> mentors = new ArrayList<>();
+    private Set<User> mentors = new HashSet<>();
 
-    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY,
+    @OneToMany(mappedBy = "course",
             cascade = CascadeType.ALL)
-    private List<Content> contents = new ArrayList<>();
+    private Set<Content> contents = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "course")
-    private List<CourseInformation> coursesInformation = new ArrayList<>();
+    @OneToMany(mappedBy = "course")
+    private Set<CourseInformation> coursesInformation = new HashSet<>();
 }

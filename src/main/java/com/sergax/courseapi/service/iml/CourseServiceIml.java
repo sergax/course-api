@@ -17,6 +17,7 @@ import javax.persistence.EntityNotFoundException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +32,7 @@ public class CourseServiceIml implements CourseService {
 
     @Override
     public List<CourseDto> findAll() {
-        return courseRepository.findAll().stream()
+        return courseRepository.findAllBy().stream()
                 .map(CourseDto::new)
                 .collect(Collectors.toList());
     }
@@ -65,13 +66,11 @@ public class CourseServiceIml implements CourseService {
     @Override
     @Transactional
     public CourseDto createCourseByMentor(CourseDto courseDto, String mentorEmail) {
-        var mentors = new ArrayList<User>();
         var mentor = userService.findUserByEmail(mentorEmail).toUser();
-        mentors.add(mentor);
         courseDto.setStatus(CourseStatus.PRIVATE)
                 .setDateStart(LocalDate.now());
         var course = courseDto.toCourse();
-        course.setMentors(mentors);
+        course.getMentors().add(mentor);
         var savedCourse = courseRepository.save(course);
 
         log.info("IN createCourseByMentor: {} course created", new CourseDto(savedCourse));

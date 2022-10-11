@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -30,10 +32,11 @@ public class Content {
     @Enumerated(EnumType.STRING)
     private TypeContent typeContent;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @OneToMany(mappedBy = "content", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "content")
+    @Fetch(FetchMode.SUBSELECT)
     private List<ContentInformation> contentsInformation = new ArrayList<>();
 }

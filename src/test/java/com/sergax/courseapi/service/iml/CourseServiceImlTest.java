@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
@@ -79,7 +80,7 @@ class CourseServiceImlTest {
 
     @Test
     void canCreateCourseByMentor() {
-        courseTest.setMentors(List.of(mentorTest));
+        courseTest.setMentors(Set.of(mentorTest));
         var courseDto = new CourseDto(courseTest);
         var mentorDto = new UserDto(mentorTest);
         when(userService.findUserByEmail(mentorTest.getEmail())).thenReturn(mentorDto);

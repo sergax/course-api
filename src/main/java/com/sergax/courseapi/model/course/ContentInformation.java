@@ -23,7 +23,7 @@ public class ContentInformation {
     @JoinColumn(name = "content_id")
     private Content content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "student_id")
     private User student;
 }

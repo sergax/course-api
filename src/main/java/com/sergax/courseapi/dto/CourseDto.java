@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
@@ -26,9 +27,9 @@ public class CourseDto extends BaseEntityDto {
     private LocalDate dateEnd;
     @NotNull(message = "PUBLIC or PRIVATE")
     private CourseStatus status;
-    private List<Long> mentorsId;
-    private List<ContentDto> contents;
-    private List<CourseInformationDto> coursesInformation;
+    private Set<Long> mentorsId;
+    private Set<ContentDto> contents;
+    private Set<CourseInformationDto> coursesInformation;
 
     public CourseDto(Course course) {
         this.id = course.getId();
@@ -44,21 +45,21 @@ public class CourseDto extends BaseEntityDto {
         } else {
             this.mentorsId = course.getMentors().stream()
                     .map(User::getId)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
         }
         if (course.getContents() == null) {
             this.contents = null;
         } else {
             this.contents = course.getContents().stream()
                     .map(ContentDto::new)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
         }
         if (course.getCoursesInformation() == null) {
             this.coursesInformation = null;
         } else {
             this.coursesInformation = course.getCoursesInformation().stream()
                     .map(CourseInformationDto::new)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
         }
     }
 
