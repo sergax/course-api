@@ -39,7 +39,9 @@ public class CourseServiceIml implements CourseService {
 
     @Override
     public List<CourseDto> findAllPublicCourses() {
-        return courseRepository.findAllByStatusPublic();
+        return findAll().stream()
+                .filter(course -> course.getStatus().equals(CourseStatus.PUBLIC))
+                .collect(Collectors.toList());
     }
 
     @Override
