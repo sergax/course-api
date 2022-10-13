@@ -68,9 +68,4 @@ public class AuthRestControllerV1 {
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("/public/courses")
-    public ResponseEntity<List<CourseDto>> getAllPublicCourses() {
-        return ResponseEntity.ok(courseService.findAllPublicCourses());
-    }
-
 }

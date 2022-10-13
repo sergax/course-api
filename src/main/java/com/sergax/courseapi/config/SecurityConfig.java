@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -19,6 +20,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String ADMIN_ENDPOINT = "/api/v1/admin/**";
     private static final String USER_ENDPOINT = "/api/v1/users/**";
     private static final String AUTH_ENDPOINT = "/api/v1/auth/**";
+    private static final String PUBLIC_ENDPOINT = "/api/v1/**/public";
 
     @Bean
     @Override
@@ -40,6 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(AUTH_ENDPOINT).permitAll()
+                .antMatchers(PUBLIC_ENDPOINT).permitAll()
                 .antMatchers(USER_ENDPOINT).hasAnyRole("ADMIN", "USER")
                 .antMatchers(ADMIN_ENDPOINT).hasAnyRole("ADMIN")
                 .anyRequest().authenticated()
