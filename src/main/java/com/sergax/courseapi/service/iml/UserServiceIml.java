@@ -87,10 +87,11 @@ public class UserServiceIml implements UserService {
     @Transactional
     public UserDto findUserByEmail(String email) {
         var user = userRepository.findByEmail(email)
+                .map(UserDto::new)
                 .orElseThrow(() -> new EntityNotFoundException(
                         format("User by email: %s, not found", email)));
         Hibernate.initialize(user.getRoles());
-        return new UserDto(user);
+        return user;
     }
 
     @Override

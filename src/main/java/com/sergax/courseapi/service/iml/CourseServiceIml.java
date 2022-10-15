@@ -53,16 +53,8 @@ public class CourseServiceIml implements CourseService {
 
     @Override
     public List<CourseMentorDto> findAllPublicCourses() {
-        return courseRepository.findAllByCourseStatus(CourseStatus.PUBLIC).stream()
-                .map(course -> new CourseMentorDto(
-                        course.getId(),
-                        course.getName(),
-                        course.getDescription(),
-                        course.getLogoUrl(),
-                        course.getMovieUrl(),
-                        course.getCourseStatus(),
-                        course.getMentors().stream().map(User::getId).collect(Collectors.toSet())
-                ))
+        return findAllCoursesAndMentors().stream()
+                .filter(courseMentorDto -> courseMentorDto.status().equals(CourseStatus.PUBLIC))
                 .toList();
     }
 

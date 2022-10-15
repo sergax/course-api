@@ -41,14 +41,14 @@ public class User {
     @Column(name = "user_status")
     private Status status;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles;
 
-    @ManyToMany(mappedBy = "mentors")
+    @ManyToMany(mappedBy = "mentors", fetch = FetchType.LAZY)
     private List<Course> courses = new ArrayList<>();
 
     @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)

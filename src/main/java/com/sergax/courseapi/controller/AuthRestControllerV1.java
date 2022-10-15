@@ -34,7 +34,7 @@ public class AuthRestControllerV1 {
         String email = requestDto.getEmail();
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, requestDto.getPassword()));
 
-        User user = userService.findUserByEmail(email).toUser();
+        var user = userService.findUserByEmail(email).toUser();
 
         if (user.getStatus().equals(Status.NOT_ACTIVE)) {
             throw new EntityNotFoundException
