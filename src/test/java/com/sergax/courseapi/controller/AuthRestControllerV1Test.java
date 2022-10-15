@@ -31,8 +31,6 @@ class AuthRestControllerV1Test {
     private UserService userServiceMock;
     @Mock
     private JwtTokenProvider jwtTokenProviderMock;
-    @Mock
-    private CourseService courseService;
     @InjectMocks
     private AuthRestControllerV1 authRestControllerV1UnderTest;
     private final LoginRequestDto loginRequestDto = new LoginRequestDto();
