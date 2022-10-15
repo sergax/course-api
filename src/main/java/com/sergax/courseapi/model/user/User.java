@@ -41,7 +41,7 @@ public class User {
     @Column(name = "user_status")
     private Status status;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -51,10 +51,10 @@ public class User {
     @ManyToMany(mappedBy = "mentors")
     private List<Course> courses = new ArrayList<>();
 
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
     private List<CourseInformation> coursesInformation = new ArrayList<>();
 
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
     private List<ContentInformation> contentsInformation = new ArrayList<>();
 }
 

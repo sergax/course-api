@@ -1,7 +1,7 @@
 package com.sergax.courseapi.repository;
 
-import com.sergax.courseapi.dto.CourseDto;
 import com.sergax.courseapi.model.course.Course;
+import com.sergax.courseapi.model.course.CourseStatus;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,8 +11,14 @@ import java.util.List;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
-    @EntityGraph(attributePaths = {"mentors", "contents","coursesInformation"})
+    @EntityGraph(attributePaths = {"mentors", "contents", "coursesInformation"})
     List<Course> findAllBy();
+
+    @Query("from Course c left join fetch c.mentors")
+    List<Course> findAll();
+
+    @EntityGraph(attributePaths = {"mentors"})
+    List<Course> findAllByCourseStatus(CourseStatus courseStatus);
 
     @Query(value = "select if (exists(select course_id , mentor_id " +
             " from courses_mentors " +

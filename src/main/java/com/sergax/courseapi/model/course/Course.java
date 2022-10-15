@@ -38,7 +38,7 @@ public class Course {
     @Column(name = "status")
     private CourseStatus courseStatus;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "courses_mentors",
             joinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id"),
@@ -47,9 +47,9 @@ public class Course {
     private Set<User> mentors = new HashSet<>();
 
     @OneToMany(mappedBy = "course",
-            cascade = CascadeType.ALL)
+            cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Content> contents = new HashSet<>();
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private Set<CourseInformation> coursesInformation = new HashSet<>();
 }

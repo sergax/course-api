@@ -1,6 +1,7 @@
 package com.sergax.courseapi.service.iml;
 
 import com.sergax.courseapi.dto.CourseDto;
+import com.sergax.courseapi.dto.CourseMentorDto;
 import com.sergax.courseapi.model.course.CourseStatus;
 import com.sergax.courseapi.model.user.User;
 import com.sergax.courseapi.repository.CourseRepository;
@@ -16,8 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,14 +33,37 @@ public class CourseServiceIml implements CourseService {
     public List<CourseDto> findAll() {
         return courseRepository.findAllBy().stream()
                 .map(CourseDto::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
-    public List<CourseDto> findAllPublicCourses() {
-        return findAll().stream()
-                .filter(course -> course.getStatus().equals(CourseStatus.PUBLIC))
-                .collect(Collectors.toList());
+    public List<CourseMentorDto> findAllCoursesAndMentors() {
+        return courseRepository.findAll().stream()
+                .map(course -> new CourseMentorDto(
+                        course.getId(),
+                        course.getName(),
+                        course.getDescription(),
+                        course.getLogoUrl(),
+                        course.getMovieUrl(),
+                        course.getCourseStatus(),
+                        course.getMentors().stream().map(User::getId).collect(Collectors.toSet())
+                ))
+                .toList();
+    }
+
+    @Override
+    public List<CourseMentorDto> findAllPublicCourses() {
+        return courseRepository.findAllByCourseStatus(CourseStatus.PUBLIC).stream()
+                .map(course -> new CourseMentorDto(
+                        course.getId(),
+                        course.getName(),
+                        course.getDescription(),
+                        course.getLogoUrl(),
+                        course.getMovieUrl(),
+                        course.getCourseStatus(),
+                        course.getMentors().stream().map(User::getId).collect(Collectors.toSet())
+                ))
+                .toList();
     }
 
     @Override
