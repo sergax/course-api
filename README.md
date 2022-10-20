@@ -16,5 +16,6 @@
  - Run: ./gradlew bootRun
  
  ## Via IDE:
- - File/open/course-api
+ - Extract .zip file to package
+ - In IDE go to File/open/course-api
  - Run: CourseApiApplication.java
