@@ -35,7 +35,7 @@ public class ContentDto extends BaseEntityDto {
         this.courseId = content.getCourse().getId();
         this.contentsInformation = content.getContentsInformation().stream()
                 .map(ContentInformationDto::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public Content toContent() {

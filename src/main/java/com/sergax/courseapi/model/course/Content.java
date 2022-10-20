@@ -37,6 +37,5 @@ public class Content {
     private Course course;
 
     @OneToMany(mappedBy = "content")
-    @Fetch(FetchMode.SUBSELECT)
     private List<ContentInformation> contentsInformation = new ArrayList<>();
 }

@@ -11,4 +11,4 @@ public record CourseMentorDto(Long id,
                               String movieUrl,
                               CourseStatus status,
                               Set<Long> mentorsId) {
-};
+}
