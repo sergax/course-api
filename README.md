@@ -7,14 +7,14 @@
  - AWS (RDS)
  - Heroku
 
-## How run project locally:
+# How run project locally:
  - Download ZIP/clone repo
  
- # Via terminal:
+ ## Via terminal:
  - Extract .zip file to package
  - Via the terminal go to ./course-api
  - Run: ./gradlew bootRun
  
- # Via IDE:
+ ## Via IDE:
  - File/open/course-api
  - Run: CourseApiApplication.java
